@@ -15,7 +15,7 @@ public class YouTubeConfig {
     public static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
     @Bean
-    public YouTube youtubeService() {
+    public YouTube youtubeApiService() {
         return new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request -> {
         }).setApplicationName("YoutubeVideoInfo")
                 .setYouTubeRequestInitializer
