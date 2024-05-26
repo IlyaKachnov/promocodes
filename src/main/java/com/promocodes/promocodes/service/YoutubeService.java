@@ -1,25 +1,32 @@
-package com.promocodes.promocodes;
+package com.promocodes.promocodes.service;
 
 import com.google.api.client.json.GenericJson;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
-import com.promocodes.promocodes.dao.PromoCodeEntity;
-import com.promocodes.promocodes.dao.PromoCodeRepository;
+import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
+import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
+import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
+import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class YoutubeService {
     private static final Logger log = LoggerFactory.getLogger(YoutubeService.class);
     private final YouTube youtubeApiService;
-    private final PromoCodeRepository promoCodeRepository;
+    private final RawVideoDataRepository rawVideoDataRepository;
+    private final YoutubeChannelRepository youtubeChannelRepository;
 
     public GenericJson getApi() throws IOException {
         YouTube.Channels.List request = youtubeApiService.channels().list("contentDetails");
@@ -32,17 +39,18 @@ public class YoutubeService {
 
     }
 
-    public List<PromoCodeEntity> getApiV2() throws IOException {
-        List<String> channels = List.of("UCRQPJnq3IFviqmIxb9_5FaQ", "UCeKCxQDv6lWDSzuqUXGtMRA");
+    public List<RawVideoDataEntity> getApiV2() throws IOException {
+        List<YoutubeChannelEntity> youtubeChannelEntityList = (List<YoutubeChannelEntity>) youtubeChannelRepository.findAll();
+        Set<String> channels = youtubeChannelEntityList.stream().map(YoutubeChannelEntity::getChannelId).collect(Collectors.toSet());
 
-        List<PromoCodeEntity> promos = new ArrayList<>();
+        List<RawVideoDataEntity> promos = new ArrayList<>();
         for (String channelId : channels) {
             promos.addAll(getPromosByChannelId(channelId));
         }
-        return (List<PromoCodeEntity>) promoCodeRepository.saveAll(promos);
+        return (List<RawVideoDataEntity>) rawVideoDataRepository.saveAll(promos);
     }
 
-    private List<PromoCodeEntity> getPromosByChannelId(String channelId) throws IOException {
+    private List<RawVideoDataEntity> getPromosByChannelId(String channelId) throws IOException {
         PlaylistListResponse playlistsResponse = youtubeApiService.playlists().list("snippet")
                 .setChannelId(channelId)
                 .execute();
@@ -62,19 +70,30 @@ public class YoutubeService {
             List<PlaylistItem> items = playlistItemListResponse.getItems();
             itemsList.addAll(items);
         }
+        //TODO вынести список нидлов
         String needle = "промокод";
+        String needle2 = "промо";
         String endNewline = "\n\n";
         int endIndex = 120;
-        List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
+        List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
         for (PlaylistItem playlistItem : itemsList) {
             PlaylistItemSnippet snippet = playlistItem.getSnippet();
             String description = snippet.getDescription();
-            PromoCodeEntity promoCodeEntity = new PromoCodeEntity();
-            promoCodeEntity.setDescription(description);
-            promoCodeEntity.setName(snippet.getTitle());
-            promoCodeEntity.setPublishedDate(snippet.getPublishedAt().toString());
+            LocalDateTime publishedAt = LocalDateTime.parse(snippet.getPublishedAt().toString(),
+                    DateTimeFormatter.ISO_DATE_TIME);
+            if (publishedAt.isBefore(LocalDateTime.now().minusMonths(1))) {
+                log.info("Video is too old = {}, published = {}", snippet.getTitle(), snippet.getPublishedAt());
+            }
+            RawVideoDataEntity rawVideoDataEntity = RawVideoDataEntity.builder()
+                    .description(description)
+                    .name(snippet.getTitle())
+                    .publishedDate(LocalDateTime.parse(snippet.getPublishedAt().toString(),
+                            DateTimeFormatter.ISO_DATE_TIME))
+                    .channelId(channelId)
+                    .playListId(playlistItem.getId())
+                    .build();
             log.info("Description: {}", description);
-            if (description.contains(needle)) {
+            if (description.contains(needle) || description.contains(needle2)) {
                 if (description.contains(endNewline) && description.indexOf(endNewline) < 250) {
                     endIndex = description.indexOf(endNewline);
                 }
@@ -86,13 +105,9 @@ public class YoutubeService {
                 String after = description.substring(startIndex, startIndex + endIndex);
                 String e = before + after;
                 log.info("String with promo = {}", e);
-
-
-                promoCodeEntity.setPromoCode(e);
-
-
+                rawVideoDataEntity.setPromoCode(e);
             }
-            promoCodeEntities.add(promoCodeEntity);
+            promoCodeEntities.add(rawVideoDataEntity);
         }
         return promoCodeEntities;
     }

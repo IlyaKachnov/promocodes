@@ -1,6 +1,6 @@
-package com.promocodes.promocodes.dao;
+package com.promocodes.promocodes.dao.entity;
 
-import jakarta.annotation.Generated;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -8,9 +8,10 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-@Table(name = "promo_code", schema = "public")
+@Table(name = "raw_video_data", schema = "public")
 @Data
-public class PromoCodeEntity {
+@Builder
+public class RawVideoDataEntity {
     @Id
     private Long id;
 
@@ -23,6 +24,12 @@ public class PromoCodeEntity {
     @Column("description")
     private String description;
 
+    @Column("channel_id")
+    private String channelId;
+
+    @Column("play_list_id")
+    private String playListId;
+
     @Column("published_date")
-    private String publishedDate;
+    private LocalDateTime publishedDate;
 }
