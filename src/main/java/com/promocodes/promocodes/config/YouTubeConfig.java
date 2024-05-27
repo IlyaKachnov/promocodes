@@ -1,4 +1,4 @@
-package com.promocodes.promocodes;
+package com.promocodes.promocodes.config;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -19,6 +19,6 @@ public class YouTubeConfig {
         return new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request -> {
         }).setApplicationName("YoutubeVideoInfo")
                 .setYouTubeRequestInitializer
-                        (new YouTubeRequestInitializer("")).build();
+                        (new YouTubeRequestInitializer("AIzaSyChb3k4RkZipGAGEaAaA4IPaNzKyCmQI_4")).build();
     }
 }

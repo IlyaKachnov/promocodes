@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -74,6 +75,7 @@ public class YoutubeService {
         String needle = "промокод";
         String needle2 = "промо";
         String endNewline = "\n\n";
+        String endLine = "http";
         int endIndex = 120;
         List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
         for (PlaylistItem playlistItem : itemsList) {
@@ -83,27 +85,28 @@ public class YoutubeService {
                     DateTimeFormatter.ISO_DATE_TIME);
             if (publishedAt.isBefore(LocalDateTime.now().minusMonths(1))) {
                 log.info("Video is too old = {}, published = {}", snippet.getTitle(), snippet.getPublishedAt());
+                continue;
             }
             RawVideoDataEntity rawVideoDataEntity = RawVideoDataEntity.builder()
                     .description(description)
                     .name(snippet.getTitle())
-                    .publishedDate(LocalDateTime.parse(snippet.getPublishedAt().toString(),
+                    .publishedDate(LocalDate.parse(snippet.getPublishedAt().toString(),
                             DateTimeFormatter.ISO_DATE_TIME))
                     .channelId(channelId)
                     .playListId(playlistItem.getId())
                     .build();
             log.info("Description: {}", description);
             if (description.contains(needle) || description.contains(needle2)) {
-                if (description.contains(endNewline) && description.indexOf(endNewline) < 250) {
-                    endIndex = description.indexOf(endNewline);
+                if (description.contains(endLine)) {
+                    endIndex = description.indexOf(endLine);
                 }
                 if (description.length() < endIndex) {
                     endIndex = description.length() - 1;
                 }
                 int startIndex = description.indexOf(needle);
-                String before = description.substring(0, startIndex);
-                String after = description.substring(startIndex, startIndex + endIndex);
-                String e = before + after;
+                String httpPart = description.substring(startIndex, endIndex);
+                String after =  description.substring(endIndex, description.indexOf("\n"));
+                String e = httpPart + after;
                 log.info("String with promo = {}", e);
                 rawVideoDataEntity.setPromoCode(e);
             }

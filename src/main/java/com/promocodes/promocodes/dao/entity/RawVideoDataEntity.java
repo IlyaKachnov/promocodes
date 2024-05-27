@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Table(name = "raw_video_data", schema = "public")
 @Data
@@ -31,5 +31,5 @@ public class RawVideoDataEntity {
     private String playListId;
 
     @Column("published_date")
-    private LocalDateTime publishedDate;
+    private LocalDate publishedDate;
 }

@@ -24,24 +24,27 @@ public class CompanyDataParser {
     public String connect() throws IOException {
         //промокод кнопка "исключать первый заказ"
         //https://promokodus.com/campaigns/goldapple
-        Document doc = Jsoup.connect("https://www.pepper.ru/merchant-list")
-                .timeout(5000)
-                .cookie("cookiename", "val234")
-                .cookie("anothercookie", "ilovejsoup")
-                .referrer("http://google.com")
-                .header("headersecurity", "xyz123")
-                .get();
-        Elements elements = doc.select("div.tGrid-cell span.text--b");
+        List<String> namings = List.of("А-Г", "Д-Ж", "З-К", "Л-О", "П-Т", "У-Ц", "Ч-Ъ",
+                "Ы-Я", "a-d", "e-g", "h-k", "l-o", "p-s", "t-w", "x-z");
         List<CompanyEntity> companyEntities = new ArrayList<>();
-        for (Element element : elements) {
-            CompanyEntity company = CompanyEntity.builder()
-                    .name(element.text())
-                    .categoryId(null)
-                    .build();
-            companyEntities.add(company);
+        for (String naming : namings) {
+            Document doc = Jsoup.connect("https://www.pepper.ru/merchant-list/" + naming)
+                    .timeout(5000)
+                    .cookie("cookiename", "val234")
+                    .cookie("anothercookie", "ilovejsoup")
+                    .referrer("http://google.com")
+                    .header("headersecurity", "xyz123")
+                    .get();
+            Elements elements = doc.select("div.tGrid-cell span.text--b");
+            for (Element element : elements) {
+                CompanyEntity company = CompanyEntity.builder()
+                        .name(element.text())
+                        .categoryId(null)
+                        .build();
+                companyEntities.add(company);
+            }
         }
         companyRepository.saveAll(companyEntities);
-        log.info(doc.outerHtml());
-        return doc.outerHtml();
+        return "OK";
     }
 }

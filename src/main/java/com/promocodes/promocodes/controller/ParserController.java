@@ -1,8 +1,10 @@
 package com.promocodes.promocodes.controller;
 
 import com.google.api.client.json.GenericJson;
+import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.service.CompanyDataParser;
+import com.promocodes.promocodes.service.PromocodeMappingService;
 import com.promocodes.promocodes.service.YoutubeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ParserController {
     private final CompanyDataParser companyDataParser;
     private final YoutubeService youtubeService;
+    private final PromocodeMappingService promocodeMappingService;
 
     @GetMapping
     public String getPage() throws IOException {
@@ -32,6 +35,11 @@ public class ParserController {
     @GetMapping("/youtube")
     public List<RawVideoDataEntity> getYoutubePageV2() throws IOException {
         return youtubeService.getApiV2();
+    }
+
+    @GetMapping("/map-youtube-data")
+    public List<PromoCodeEntity> mapYoutubeData() {
+        return promocodeMappingService.mapRawDataToPromocodes();
     }
 
 }
