@@ -19,6 +19,6 @@ public class YouTubeConfig {
         return new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request -> {
         }).setApplicationName("YoutubeVideoInfo")
                 .setYouTubeRequestInitializer
-                        (new YouTubeRequestInitializer("AIzaSyChb3k4RkZipGAGEaAaA4IPaNzKyCmQI_4")).build();
+                        (new YouTubeRequestInitializer("")).build();
     }
 }
