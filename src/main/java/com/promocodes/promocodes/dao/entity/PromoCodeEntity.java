@@ -18,4 +18,10 @@ public class PromoCodeEntity {
 
     @Column("company_name")
     private String companyName;
+
+    @Column("promo_code")
+    private String promoCode;
+
+    @Column("url")
+    private String url;
 }

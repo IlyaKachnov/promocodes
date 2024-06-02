@@ -83,32 +83,21 @@ public class YoutubeService {
             String description = snippet.getDescription();
             LocalDateTime publishedAt = LocalDateTime.parse(snippet.getPublishedAt().toString(),
                     DateTimeFormatter.ISO_DATE_TIME);
-            if (publishedAt.isBefore(LocalDateTime.now().minusMonths(1))) {
-                log.info("Video is too old = {}, published = {}", snippet.getTitle(), snippet.getPublishedAt());
-                continue;
-            }
+//            if (publishedAt.isBefore(LocalDateTime.now().minusMonths(2))) {
+//                log.info("Video is too old = {}, published = {}", snippet.getTitle(), snippet.getPublishedAt());
+//                continue;
+//            }
             RawVideoDataEntity rawVideoDataEntity = RawVideoDataEntity.builder()
                     .description(description)
                     .name(snippet.getTitle())
                     .publishedDate(LocalDate.parse(snippet.getPublishedAt().toString(),
                             DateTimeFormatter.ISO_DATE_TIME))
-                    .channelId(channelId)
+                    .channelId(snippet.getChannelTitle())
                     .playListId(playlistItem.getId())
                     .build();
             log.info("Description: {}", description);
             if (description.contains(needle) || description.contains(needle2)) {
-                if (description.contains(endLine)) {
-                    endIndex = description.indexOf(endLine);
-                }
-                if (description.length() < endIndex) {
-                    endIndex = description.length() - 1;
-                }
-                int startIndex = description.indexOf(needle);
-                String httpPart = description.substring(startIndex, endIndex);
-                String after =  description.substring(endIndex, description.indexOf("\n"));
-                String e = httpPart + after;
-                log.info("String with promo = {}", e);
-                rawVideoDataEntity.setPromoCode(e);
+                rawVideoDataEntity.setPromoCode(description);
             }
             promoCodeEntities.add(rawVideoDataEntity);
         }

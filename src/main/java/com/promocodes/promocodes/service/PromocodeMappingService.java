@@ -6,13 +6,12 @@ import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.dao.repository.CompanyRepository;
 import com.promocodes.promocodes.dao.repository.PromoCodeRepository;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
+import com.promocodes.promocodes.utils.YoutubeDataUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,6 +19,8 @@ public class PromocodeMappingService {
     private final RawVideoDataRepository rawVideoDataRepository;
     private final CompanyRepository companyRepository;
     private final PromoCodeRepository promoCodeRepository;
+
+    private final List<String> needles = List.of("промокодом","промокоду", "промокод");
 
     /**
      * TODO из синхронайзд листа берем элементы из сырых данных ютуба. В неск
@@ -37,12 +38,9 @@ public class PromocodeMappingService {
 
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
         for (String promoCode : promocodes) {
-            String promoCodeCompany = containsWords(promoCode, companyNames);
-            PromoCodeEntity promoCodeEntity = PromoCodeEntity.builder()
-                    .description(promoCode)
-                    .companyName(promoCodeCompany)
-                    .build();
-            promoCodeEntities.add(promoCodeEntity);
+            if (promoCode != null) {
+                promoCodeEntities.add(YoutubeDataUtils.buildString(promoCode, needles));
+            }
         }
 
         return (List<PromoCodeEntity>) promoCodeRepository.saveAll(promoCodeEntities);
