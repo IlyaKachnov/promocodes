@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Long> {
 
-    @Query("select * from promo_code limit 10")
-    List<PromoCodeEntity> findFirst10();
+    @Query("select * from promo_code where promo_code.promo_code is not null limit 10")
+    List<PromoCodeEntity> findFirst100();
 }

@@ -24,7 +24,7 @@ public class CallbackQueryHandler {
         String data = buttonQuery.getData();
         List<PromoCodeEntity> promoCodeEntities = (List<PromoCodeEntity>) promoCodeRepository.findAll();
 
-        return new SendMessage(chatId, promoCodeEntities.stream().map(PromoCodeEntity::getPromoCode)
-                .collect(Collectors.joining("-", "{", "}")));
+        return new SendMessage(chatId, promoCodeEntities.stream().map(PromoCodeEntity::getDescription)
+                .collect(Collectors.joining("\n\n", "{", "}")));
     }
 }

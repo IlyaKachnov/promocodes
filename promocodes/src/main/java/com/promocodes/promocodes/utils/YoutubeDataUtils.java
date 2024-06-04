@@ -7,8 +7,9 @@ import java.util.List;
 
 @Slf4j
 public class YoutubeDataUtils {
-    public static PromoCodeEntity buildString(String description, List<String> needles) {
+    public static PromoCodeEntity buildStringV1(String description, List<String> needles) {
         String needle = needles.get(0);
+
         for (String needleItem : needles) {
             if (description.contains(needleItem)) {
                 needle = needleItem;
@@ -43,5 +44,46 @@ public class YoutubeDataUtils {
         return PromoCodeEntity.builder()
                 .description(description)
                 .build();
+    }
+
+    public static PromoCodeEntity buildStringV2(String description, List<String> needles) {
+        String needle = needles.get(0);
+        for (String needleItem : needles) {
+            if (description.contains(needleItem)) {
+                needle = needleItem;
+                break;
+            }
+        }
+        PromoCodeEntity promoCodeEntity = getNewLines(description, description.indexOf(needle));
+        log.info("Result = {}", promoCodeEntity);
+        return promoCodeEntity;
+    }
+
+    private static PromoCodeEntity getNewLines(String str, int promoIndex) {
+        str = str.replace("\n\n", "\n");
+        int startIndex = 0;
+        int endIndex = str.indexOf("\n");
+        if (endIndex == -1) {
+            return PromoCodeEntity.builder()
+                    .description(str)
+                    .build();
+        }
+        while (!(promoIndex >= startIndex && promoIndex < endIndex)) {
+            if (startIndex == -1) {
+                return PromoCodeEntity.builder()
+                        .description(str)
+                        .build();
+            }
+            startIndex = str.indexOf("\n", endIndex + 1);
+            endIndex = str.indexOf("\n", startIndex + 1);
+            log.info("StartIndex = {}, endIndex = {}, promoIndex = {}", startIndex, endIndex, promoIndex);
+
+        }
+        String promoStr = str.substring(startIndex, endIndex);
+        return PromoCodeEntity.builder()
+                .description(promoStr)
+                .promoCode(promoStr)
+                .build();
+
     }
 }

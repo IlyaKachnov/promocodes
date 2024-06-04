@@ -32,6 +32,9 @@ public class YoutubeService {
     public GenericJson getApi() throws IOException {
         YouTube.Channels.List request = youtubeApiService.channels().list("contentDetails");
         request.setForUsername("UCMCgOm8GZkHp8zJ6l7_hIuA");
+//        YouTube.Search.List search = youtubeApiService.search().list("id,snippet");
+//
+//        search.setChannelId()
         ChannelListResponse response = request.execute();
 
         String uploads = response.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();

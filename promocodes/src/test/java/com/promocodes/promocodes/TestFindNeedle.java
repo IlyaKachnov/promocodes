@@ -3,6 +3,8 @@ package com.promocodes.promocodes;
 import com.promocodes.promocodes.utils.YoutubeDataUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class TestFindNeedle {
 
     public static String text = "Детский патологоанатом Таня Хитрова рассказала о плюсах и минусах своей работы, учебе и личных границах. Мне, как человеку с медицинским образованием, было очень интересно спросить у Тани о самых интересных случаях в ее работе.\n" +
@@ -26,7 +28,7 @@ public class TestFindNeedle {
 
     @Test
     public void testFind() {
-        YoutubeDataUtils.buildString(text, "промокод");
+        YoutubeDataUtils.buildStringV2(text, List.of("промокод"));
     }
 
 }
