@@ -39,7 +39,7 @@ public class PromocodeMappingService {
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
         for (String promoCode : promocodes) {
             if (promoCode != null) {
-                promoCodeEntities.add(YoutubeDataUtils.buildStringV2(promoCode, needles));
+                promoCodeEntities.add(YoutubeDataUtils.buildStringV3(promoCode, needles));
             }
         }
 
