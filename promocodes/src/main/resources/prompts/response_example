@@ -1,0 +1,24 @@
+<200 OK OK,com.gptapi.response.ResponseGpt@534a2bf2[choices=[com.gptapi.response.Choice@35b573a8[message=com.gptapi.response.Message@55f385ba[role=assistant,content={
+  "companies": [
+    {
+      "name": "Somia Sleep",
+      "url": "https://somiasleep.ru/",
+      "category": "Товары для сна"
+    },
+    {
+      "name": "Okko",
+      "url": "https://okko.tv/s/drc",
+      "category": "Онлайн-кинотеатр"
+    },
+    {
+      "name": "Khitrova Medical",
+      "url": "https://khitrovamed.com/",
+      "category": "Товары для сна"
+    },
+    {
+      "name": "Go Sky",
+      "url": "https://go.sky.pro",
+      "category": "Иное"
+    }
+  ]
+},dataForContext=[]],index=0,finishReason=stop]],created=1717707476,model=GigaChat:3.1.25.3,usage=com.gptapi.response.Usage@666b5673[promptTokens=175,completionTokens=192,totalTokens=367],object=chat.completion],[Server:"nginx", Date:"Thu, 06 Jun 2024 20:57:56 GMT", Content-Type:"application/json; charset=utf-8", Content-Length:"826", Connection:"keep-alive", Access-Control-Allow-Credentials:"true", Access-Control-Allow-Headers:"Origin, X-Requested-With, Content-Type, Accept, Authorization", Access-Control-Allow-Methods:"GET, POST, DELETE, OPTIONS", Access-Control-Allow-Origin:"https://beta.saluteai.sberdevices.ru", X-Request-Id:"a841911a-5ac7-4391-9154-5b429dfb2a82", X-Session-Id:"90b13830-c54f-40bb-9c00-745eccb63ce6", Allow:"GET, POST", "GET, POST", X-Frame-Options:"SAMEORIGIN", "SAMEORIGIN", X-XSS-Protection:"1; mode=block", "1; mode=block", X-Content-Type-Options:"nosniff", "nosniff", Strict-Transport-Security:"max-age=31536000; includeSubDomains", "max-age=31536000; includeSubDomains"]>

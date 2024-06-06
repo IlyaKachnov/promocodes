@@ -1,12 +1,15 @@
 package com.promocodes.promocodes.controller;
 
 import com.google.api.client.json.GenericJson;
+import com.gptapi.response.ResponseGpt;
+import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.service.CompanyDataParser;
 import com.promocodes.promocodes.service.PromocodeMappingService;
 import com.promocodes.promocodes.service.YoutubeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +24,7 @@ public class ParserController {
     private final CompanyDataParser companyDataParser;
     private final YoutubeService youtubeService;
     private final PromocodeMappingService promocodeMappingService;
+    private final GPTApiService gptApiService;
 
     @GetMapping
     public String getPage() throws IOException {
@@ -42,4 +46,8 @@ public class ParserController {
         return promocodeMappingService.mapRawDataToPromocodes();
     }
 
+    @GetMapping("/get-gpt-response")
+    public ResponseEntity<ResponseGpt> getGptResponse() throws IOException {
+        return gptApiService.getGptResponse();
+    }
 }
