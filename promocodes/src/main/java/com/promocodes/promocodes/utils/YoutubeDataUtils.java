@@ -3,8 +3,10 @@ package com.promocodes.promocodes.utils;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class YoutubeDataUtils {
@@ -70,19 +72,20 @@ public class YoutubeDataUtils {
             }
         }
         String str = description.replace("\n\n", "\n");
-        List<Paragraph> paragraphs = getParagraphs(str);
+        Map<Integer, Paragraph> paragraphs = getParagraphs(str);
 
-        Paragraph promoParagraph = getPromoParagraph(paragraphs, str.indexOf(needle));
-
+        Paragraph promoParagraph = getPromoParagraph(paragraphs.values(), str.indexOf(needle));
         if (promoParagraph == null) {
             return PromoCodeEntity.builder()
                     .description(str)
                     .build();
         }
+        String promoUrl = findPromoUrl(paragraphs, promoParagraph);
 
         return PromoCodeEntity.builder()
                 .promoCode(promoParagraph.getText())
                 .description(str)
+                .url(promoUrl)
                 .build();
     }
 
@@ -139,20 +142,22 @@ public class YoutubeDataUtils {
     }
 
 
-    private static List<Paragraph> getParagraphs(String str) {
+    private static Map<Integer, Paragraph> getParagraphs(String str) {
         str = str.replace("\n\n", "\n");
-        List<Paragraph> paragraphs = new ArrayList<>();
+        Map<Integer, Paragraph> paragraphs = new HashMap<>();
         int startIndex = 0;
         int endIndex = str.indexOf("\n", startIndex) == -1 ? str.length() - 1 : str.indexOf("\n", startIndex);
+        int order = 1;
         while (endIndex != -1) {
-            paragraphs.add(new Paragraph(startIndex, endIndex, str.substring(startIndex, endIndex)));
+            paragraphs.put(order, new Paragraph(startIndex, endIndex, str.substring(startIndex, endIndex), order));
             startIndex = endIndex + 1;
             endIndex = str.indexOf("\n", startIndex);
+            order++;
         }
         return paragraphs;
     }
 
-    private static Paragraph getPromoParagraph(List<Paragraph> paragraphs, int indexOfPromoCode) {
+    private static Paragraph getPromoParagraph(Collection<Paragraph> paragraphs, int indexOfPromoCode) {
         for (Paragraph paragraph : paragraphs) {
             if (indexOfPromoCode > paragraph.getStartIndex() && indexOfPromoCode < paragraph.getEndIndex()) {
                 return paragraph;
@@ -161,13 +166,37 @@ public class YoutubeDataUtils {
         return null;
     }
 
-//    public static String findPromoUrl(List<Paragraph> paragraphs, Paragraph promoParagraph, int indexOfPromoCode) {
-//        int httpIndex = promoParagraph.getText().indexOf("http");
-//        if (httpIndex != -1) {
-//            return promoParagraph.getText().substring(httpIndex, getEndOfUrl(promoParagraph.getText(), httpIndex));
-//        }
-//        for (Paragraph paragraph : paragraphs) {
-//
-//        }
-//    }
+    public static String findPromoUrl(Map<Integer, Paragraph> paragraphs, Paragraph promoParagraph) {
+        int httpIndex = promoParagraph.getText().indexOf("http");
+        if (httpIndex != -1) {
+            return promoParagraph.getText().substring(httpIndex, getEndOfUrl(promoParagraph.getText(), httpIndex));
+        }
+        int promoOrder = promoParagraph.getOrder();
+        int upSearchIndex = promoOrder - 1;
+        int downSearchIndex = promoOrder + 1;
+        while (true) {
+            log.info("Size = {}", paragraphs.size());
+            if (upSearchIndex <= 0 && downSearchIndex > paragraphs.size()) {
+                log.info("Not found http for string = {}", promoParagraph.getText());
+                return null;
+            }
+            log.info("Up index = {} down index = {}", upSearchIndex, downSearchIndex);
+            if (upSearchIndex > 0) {
+                Paragraph paragraph = paragraphs.get(upSearchIndex);
+                httpIndex = paragraph.getText().indexOf("http");
+                if (httpIndex != -1) {
+                    return paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex));
+                }
+            }
+            if (downSearchIndex < paragraphs.size()) {
+                Paragraph paragraph = paragraphs.get(downSearchIndex);
+                httpIndex = paragraph.getText().indexOf("http");
+                if (httpIndex != -1) {
+                    return paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex));
+                }
+            }
+            upSearchIndex--;
+            downSearchIndex++;
+        }
+    }
 }

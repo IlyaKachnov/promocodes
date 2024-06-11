@@ -9,4 +9,5 @@ public class Paragraph {
     private int startIndex;
     private int endIndex;
     private String text;
+    private int order;
 }
