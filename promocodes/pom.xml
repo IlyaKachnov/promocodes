@@ -135,6 +135,23 @@
                             <goal>generate</goal>
                         </goals>
                     </execution>
+
+                    <execution>
+                        <id>3</id>
+                        <configuration>
+                            <annotationStyle>jackson2</annotationStyle>
+                            <includeAdditionalProperties>false</includeAdditionalProperties>
+                            <sourcePaths>
+                                <sourcePath>${project.basedir}/src/main/resources/prompts/access_token_response.json</sourcePath>
+                            </sourcePaths>
+                            <sourceType>json</sourceType>
+                            <outputDirectory>src/main/java</outputDirectory>
+                            <targetPackage>com.gptapi.response</targetPackage>
+                        </configuration>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
