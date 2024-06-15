@@ -50,4 +50,9 @@ public class ParserController {
     public ResponseEntity<ResponseGpt> getGptResponse() throws IOException {
         return gptApiService.getGptResponse();
     }
+
+    @GetMapping("/find-company-url")
+    public ResponseEntity<?> findCompanyUrl() throws IOException {
+        return gptApiService.fillCompanyUrl();
+    }
 }
