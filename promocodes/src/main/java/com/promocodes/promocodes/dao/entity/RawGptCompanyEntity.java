@@ -6,19 +6,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "company")
+@Table(name = "raw_gpt_company")
 @Data
 @Builder
-public class CompanyEntity {
+public class RawGptCompanyEntity {
     @Id
     private Long id;
 
-    @Column("name")
-    private String name;
-
-    @Column("url")
-    private String url;
-
-    @Column("category_id")
-    private Long categoryId;
+    @Column("data")
+    private String data;
 }

@@ -1,15 +1,21 @@
 package com.promocodes.promocodes.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gptapi.request.Message;
 import com.gptapi.request.RequestGpt;
 import com.gptapi.response.AccessTokenResponse;
 import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.dao.entity.AccessTokenEntity;
 import com.promocodes.promocodes.dao.entity.CompanyEntity;
+import com.promocodes.promocodes.dao.entity.RawGptCompanyEntity;
 import com.promocodes.promocodes.dao.repository.AccessTokenRepository;
 import com.promocodes.promocodes.dao.repository.CompanyRepository;
+import com.promocodes.promocodes.dao.repository.RawGptCompanyRepository;
 import com.promocodes.promocodes.utils.FileReaderUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GPTApiService {
     private final CompanyRepository companyRepository;
     @Value("${gpt.auth-token}")
@@ -30,6 +37,9 @@ public class GPTApiService {
     private final RestTemplate restTemplate;
     public final AccessTokenRepository accessTokenRepository;
     private final FileReaderUtils fileReaderUtils;
+    private final ObjectMapper objectMapper;
+
+    private final RawGptCompanyRepository rawGptCompanyRepository;
 
     public ResponseEntity<ResponseGpt> getGptResponse() {
         AccessTokenEntity authToken = getAuthToken();
@@ -77,14 +87,38 @@ public class GPTApiService {
         return responseGptResponseEntity;
     }
 
-    public ResponseEntity<String> fillCompanyUrl() {
+    public ResponseEntity<String> fillCompanyUrl() throws JsonProcessingException {
+       companyRepository.save(CompanyEntity.builder()
+                       .name("123")
+                       .url("123")
+               .build());
         long count = companyRepository.count();
-        int numberOfQueries = (int) Math.ceil((double) count / 10);
+        int offset = 0;
+        int limit = (int) Math.ceil((double) count / 80);
         List<CompanyEntity> companiesAfterUpdate = new ArrayList<>();
         StringBuilder gptResponseMessage = new StringBuilder();
-        for (int i = 0; i < numberOfQueries; i++) {
-            StringBuilder companyUrlPromptBuilder = new StringBuilder(fileReaderUtils.readFromFile()).append("\n");
-            List<CompanyEntity> companyEntities = (List<CompanyEntity>) companyRepository.getFirstN(i);
+        String readFromFile = fileReaderUtils.readFromFile();
+        List<CompanyGptDto> companyGptDtos = new ArrayList<>();
+//
+//        List<RawGptCompanyEntity> all = (List<RawGptCompanyEntity>) rawGptCompanyRepository.findAll();
+//        for (RawGptCompanyEntity rawGptCompanyEntity : all) {
+//            List<CompanyGptDto> readValue = objectMapper.readValue(rawGptCompanyEntity.getData(),
+//                    new TypeReference<>() {
+//                    });
+//            companyGptDtos.addAll(readValue);
+//        }
+//        if (!all.isEmpty()) {
+//            for (CompanyGptDto companyGptDto : companyGptDtos) {
+//                log.info("Updating company name = {}, url = {}", companyGptDto.getCompanyName(), companyGptDto.getUrl());
+//                companyRepository.updateCompany(companyGptDto.getUrl(), companyGptDto.getCompanyName());
+//            }
+//            return ResponseEntity.ok("OK");
+//        }
+
+
+        while (offset < count) {
+            StringBuilder companyUrlPromptBuilder = new StringBuilder(readFromFile).append("\n");
+            List<CompanyEntity> companyEntities = (List<CompanyEntity>) companyRepository.getOffsetN(limit, offset);
 
             for (CompanyEntity companyEntity : companyEntities) {
                 companyUrlPromptBuilder.append(companyEntity.getName()).append("\n");
@@ -92,9 +126,22 @@ public class GPTApiService {
             ResponseEntity<ResponseGpt> batchGptRequest = getBatchGptRequest(companyUrlPromptBuilder);
             com.gptapi.response.Message message = batchGptRequest.getBody().getChoices().get(0).getMessage();
             //todo save gpt response then map to cpmpany
-            gptResponseMessage.append(message.toString());
+            List<CompanyGptDto> readValue = objectMapper.readValue(message.getContent(),
+                    new TypeReference<>() {
+                    });
+            log.info("Read value = {}", readValue.toString());
+            companyGptDtos.addAll(readValue);
+            RawGptCompanyEntity rawGptCompanyEntity = RawGptCompanyEntity.builder()
+                    .data(objectMapper.writeValueAsString(message.getContent()))
+                    .build();
+            rawGptCompanyRepository.save(rawGptCompanyEntity);
+            offset += limit;
         }
 
+        for (CompanyGptDto companyGptDto : companyGptDtos) {
+            log.info("Updating company name = {}, url = {}", companyGptDto.getCompanyName(), companyGptDto.getUrl());
+            companyRepository.updateCompany(companyGptDto.getUrl(), companyGptDto.getCompanyName());
+        }
         return ResponseEntity.ok(gptResponseMessage.toString());
     }
 

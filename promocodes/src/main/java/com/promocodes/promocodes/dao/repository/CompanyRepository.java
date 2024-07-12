@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends CrudRepository<CompanyEntity, Long> {
-    @Query("select * from company limit 10 offset :offset")
-    List<CompanyEntity> getFirstN(@Param("offset") Integer offset);
+    @Query("select * from company limit :limit offset :offset")
+    List<CompanyEntity> getOffsetN(@Param("limit") Integer limit, @Param("offset") Integer offset);
 
     @Modifying
     @Query("update company set url =:url where name = :name")
