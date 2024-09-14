@@ -1,11 +1,13 @@
 package com.promocodes.promocodes.service;
 
-import com.google.api.client.json.GenericJson;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.*;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.PlaylistItemSnippet;
+import com.google.api.services.youtube.model.PlaylistListResponse;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
-import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
+import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,19 +31,6 @@ public class YoutubeService {
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;
 
-    public GenericJson getApi() throws IOException {
-        YouTube.Channels.List request = youtubeApiService.channels().list("contentDetails");
-        request.setForUsername("UCMCgOm8GZkHp8zJ6l7_hIuA");
-//        YouTube.Search.List search = youtubeApiService.search().list("id,snippet");
-//
-//        search.setChannelId()
-        ChannelListResponse response = request.execute();
-
-        String uploads = response.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
-        YouTube.Playlists.List playlistsListRequest = youtubeApiService.playlists().list("snippet");
-        return playlistsListRequest.execute();
-
-    }
 
     public List<RawVideoDataEntity> getApiV2() throws IOException {
         List<YoutubeChannelEntity> youtubeChannelEntityList = (List<YoutubeChannelEntity>) youtubeChannelRepository.findAll();
@@ -77,9 +66,6 @@ public class YoutubeService {
         //TODO вынести список нидлов
         String needle = "промокод";
         String needle2 = "промо";
-        String endNewline = "\n\n";
-        String endLine = "http";
-        int endIndex = 120;
         List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
         for (PlaylistItem playlistItem : itemsList) {
             PlaylistItemSnippet snippet = playlistItem.getSnippet();
@@ -97,10 +83,13 @@ public class YoutubeService {
                             DateTimeFormatter.ISO_DATE_TIME))
                     .channelId(snippet.getChannelTitle())
                     .playListId(playlistItem.getId())
+                    .createdAt(LocalDateTime.now())
                     .build();
-            log.info("Description: {}", description);
+            log.debug("Description: {}", description);
+
             if (description.contains(needle) || description.contains(needle2)) {
                 rawVideoDataEntity.setPromoCode(description);
+                log.info("Promocode line = {}", description);
             }
             promoCodeEntities.add(rawVideoDataEntity);
         }

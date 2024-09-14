@@ -31,10 +31,6 @@ public class ParserController {
         return companyDataParser.connect();
     }
 
-    @GetMapping("/youtube/v1")
-    public GenericJson getYoutubePageV1() throws IOException {
-        return youtubeService.getApi();
-    }
 
     @GetMapping("/youtube")
     public List<RawVideoDataEntity> getYoutubePageV2() throws IOException {

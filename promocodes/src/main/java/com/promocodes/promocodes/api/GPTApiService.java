@@ -11,6 +11,7 @@ import com.promocodes.promocodes.dao.entity.AccessTokenEntity;
 import com.promocodes.promocodes.dao.entity.CompanyEntity;
 import com.promocodes.promocodes.dao.entity.RawGptCompanyEntity;
 import com.promocodes.promocodes.dao.repository.AccessTokenRepository;
+import com.promocodes.promocodes.dao.repository.CategoryRepository;
 import com.promocodes.promocodes.dao.repository.CompanyRepository;
 import com.promocodes.promocodes.dao.repository.RawGptCompanyRepository;
 import com.promocodes.promocodes.utils.FileReaderUtils;
@@ -32,6 +33,7 @@ import java.util.*;
 @Slf4j
 public class GPTApiService {
     private final CompanyRepository companyRepository;
+    private final CategoryRepository categoryRepository;
     @Value("${gpt.auth-token}")
     private String token;
     private final RestTemplate restTemplate;
@@ -88,10 +90,6 @@ public class GPTApiService {
     }
 
     public ResponseEntity<String> fillCompanyUrl() throws JsonProcessingException {
-       companyRepository.save(CompanyEntity.builder()
-                       .name("123")
-                       .url("123")
-               .build());
         long count = companyRepository.count();
         int offset = 0;
         int limit = (int) Math.ceil((double) count / 80);
@@ -99,22 +97,6 @@ public class GPTApiService {
         StringBuilder gptResponseMessage = new StringBuilder();
         String readFromFile = fileReaderUtils.readFromFile();
         List<CompanyGptDto> companyGptDtos = new ArrayList<>();
-//
-//        List<RawGptCompanyEntity> all = (List<RawGptCompanyEntity>) rawGptCompanyRepository.findAll();
-//        for (RawGptCompanyEntity rawGptCompanyEntity : all) {
-//            List<CompanyGptDto> readValue = objectMapper.readValue(rawGptCompanyEntity.getData(),
-//                    new TypeReference<>() {
-//                    });
-//            companyGptDtos.addAll(readValue);
-//        }
-//        if (!all.isEmpty()) {
-//            for (CompanyGptDto companyGptDto : companyGptDtos) {
-//                log.info("Updating company name = {}, url = {}", companyGptDto.getCompanyName(), companyGptDto.getUrl());
-//                companyRepository.updateCompany(companyGptDto.getUrl(), companyGptDto.getCompanyName());
-//            }
-//            return ResponseEntity.ok("OK");
-//        }
-
 
         while (offset < count) {
             StringBuilder companyUrlPromptBuilder = new StringBuilder(readFromFile).append("\n");

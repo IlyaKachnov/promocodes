@@ -31,10 +31,16 @@ public class MessageHandler {
         } else if (inputText.equals("/promo")) {
             List<PromoCodeEntity> first10 = promoCodeRepository.findFirst100();
             log.info("Found {} promo codes", first10.size());
-            return new SendMessage(chatId, first10.stream().map(PromoCodeEntity::getDescription)
+            return new SendMessage(chatId, first10.stream()
+                    .map(this::generateMessageText)
                     .collect(Collectors.joining("\n\n")));
         } else {
             return new SendMessage(chatId, "не знаю такова");
         }
+    }
+
+    private String generateMessageText(PromoCodeEntity promoCodeEntity) {
+        return new StringBuilder().append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
+                .append("Ссылка на сайт:").append(promoCodeEntity.getUrl()).toString();
     }
 }

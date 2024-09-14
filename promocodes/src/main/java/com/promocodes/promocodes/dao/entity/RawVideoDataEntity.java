@@ -7,6 +7,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table(name = "raw_video_data", schema = "public")
 @Data
@@ -32,4 +33,7 @@ public class RawVideoDataEntity {
 
     @Column("published_date")
     private LocalDate publishedDate;
+
+    @Column("created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
