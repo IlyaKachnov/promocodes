@@ -3,6 +3,7 @@ package com.promocodes.promocodes.utils;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ public class YoutubeDataUtils {
                 .promoCode(promoParagraph.getText())
                 .description(str)
                 .url(promoUrl)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

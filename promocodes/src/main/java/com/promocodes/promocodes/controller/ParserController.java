@@ -1,6 +1,6 @@
 package com.promocodes.promocodes.controller;
 
-import com.google.api.client.json.GenericJson;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
@@ -38,8 +38,9 @@ public class ParserController {
     }
 
     @GetMapping("/map-youtube-data")
-    public List<PromoCodeEntity> mapYoutubeData() {
-        return promocodeMappingService.mapRawDataToPromocodes();
+    public List<PromoCodeEntity> mapYoutubeData() throws JsonProcessingException {
+        var promoCodeEntities = promocodeMappingService.mapRawDataToPromocodes();
+        return promocodeMappingService.fillCategoryInfo(promoCodeEntities);
     }
 
     @GetMapping("/get-gpt-response")

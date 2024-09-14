@@ -2,7 +2,6 @@ package com.promocodes.promocodes.dao.entity;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -27,6 +26,9 @@ public class PromoCodeEntity {
 
     @Column("url")
     private String url;
+
+    @Column("category")
+    private String category;
 
     @Column("created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

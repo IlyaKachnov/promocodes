@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -183,6 +184,41 @@ public class GPTApiService {
                             .build();
                     return accessTokenRepository.save(accessTokenEntity);
                 });
+    }
+
+    public ResponseEntity<ResponseGpt> getGptResponse(String promptFile, List<String> categoryList, List<String> toFillFields) throws JsonProcessingException {
+        AccessTokenEntity authToken = getAuthToken();
+
+        String readFromFile = fileReaderUtils.readFromFile(promptFile);
+
+        var categoryString = categoryList.stream().collect(Collectors.joining("\n"));
+        var toFillString = toFillFields.stream().collect(Collectors.joining("\n"));
+        String companyPrompt = String.format(readFromFile,categoryString,  toFillString);
+        RequestGpt requestGpt = new RequestGpt();
+        requestGpt.setModel("GigaChat");
+        requestGpt.setTemperature(1.0);
+        requestGpt.setTopP(0.1);
+        requestGpt.setN(1);
+        requestGpt.setStream(false);
+        requestGpt.setMaxTokens(512);
+        requestGpt.setRepetitionPenalty(1);
+
+        Message message = new Message();
+        message.setContent(companyPrompt);
+        message.setRole("user");
+        requestGpt.setMessages(List.of(message));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(authToken.getToken());
+        HttpEntity<RequestGpt> entity = new HttpEntity<>(requestGpt, headers);
+        ResponseEntity<ResponseGpt> responseGptResponseEntity = restTemplate.postForEntity("https://gigachat.devices.sberbank.ru/api/v1/chat/completions",
+                entity,
+                ResponseGpt.class);
+        rawGptCompanyRepository.save(RawGptCompanyEntity.builder()
+                        .data(objectMapper.writeValueAsString(responseGptResponseEntity.getBody()))
+                .build());
+        return responseGptResponseEntity;
     }
 
 
