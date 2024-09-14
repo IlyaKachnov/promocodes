@@ -1,10 +1,10 @@
 package com.promocodes.promocodes.service;
 
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistItemSnippet;
-import com.google.api.services.youtube.model.PlaylistListResponse;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
@@ -36,6 +36,8 @@ public class YoutubeService {
         List<YoutubeChannelEntity> youtubeChannelEntityList = (List<YoutubeChannelEntity>) youtubeChannelRepository.findAll();
         Set<String> channels = youtubeChannelEntityList.stream().map(YoutubeChannelEntity::getChannelId).collect(Collectors.toSet());
 
+        //TODO добавить канал улица шкловского
+//        Set<String> channels = Set.of("UCUmeLZofGMhO5lVOHUEUU2A");
         List<RawVideoDataEntity> promos = new ArrayList<>();
         for (String channelId : channels) {
             promos.addAll(getPromosByChannelId(channelId));
@@ -44,30 +46,22 @@ public class YoutubeService {
     }
 
     private List<RawVideoDataEntity> getPromosByChannelId(String channelId) throws IOException {
-        PlaylistListResponse playlistsResponse = youtubeApiService.playlists().list("snippet")
-                .setChannelId(channelId)
+        ChannelListResponse channelListResponse = youtubeApiService.channels().list("snippet").setId(channelId)
+                .setPart("contentDetails")
                 .execute();
+        String uploadsPlaylistId = channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
 
-        List<String> playlistIds = new ArrayList<>();
-        if (playlistsResponse.getItems() != null && !playlistsResponse.getItems().isEmpty()) {
-            for (com.google.api.services.youtube.model.Playlist playlist : playlistsResponse.getItems()) {
-                playlistIds.add(playlist.getId());
-            }
-        }
-        //todo берем где больше всего items
-        List<PlaylistItem> itemsList = new ArrayList<>();
-        for (String playlistId : playlistIds) {
-            PlaylistItemListResponse playlistItemListResponse = youtubeApiService.playlistItems()
-                    .list("snippet")
-                    .setPlaylistId(playlistId).setMaxResults(50L).execute();
-            List<PlaylistItem> items = playlistItemListResponse.getItems();
-            itemsList.addAll(items);
-        }
+        PlaylistItemListResponse playlistItemListResponse = youtubeApiService.playlistItems()
+                .list("snippet")
+                .setPlaylistId(uploadsPlaylistId).setMaxResults(10L).execute();
+        List<PlaylistItem> items = playlistItemListResponse.getItems();
+
+
         //TODO вынести список нидлов
         String needle = "промокод";
         String needle2 = "промо";
         List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
-        for (PlaylistItem playlistItem : itemsList) {
+        for (PlaylistItem playlistItem : items) {
             PlaylistItemSnippet snippet = playlistItem.getSnippet();
             String description = snippet.getDescription();
             LocalDateTime publishedAt = LocalDateTime.parse(snippet.getPublishedAt().toString(),

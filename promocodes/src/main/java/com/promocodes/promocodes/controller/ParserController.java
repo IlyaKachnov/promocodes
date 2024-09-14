@@ -40,7 +40,8 @@ public class ParserController {
     @GetMapping("/map-youtube-data")
     public List<PromoCodeEntity> mapYoutubeData() throws JsonProcessingException {
         var promoCodeEntities = promocodeMappingService.mapRawDataToPromocodes();
-        return promocodeMappingService.fillCategoryInfo(promoCodeEntities);
+//        promocodeMappingService.fillCategoryInfo(promoCodeEntities);
+        return promoCodeEntities;
     }
 
     @GetMapping("/get-gpt-response")
