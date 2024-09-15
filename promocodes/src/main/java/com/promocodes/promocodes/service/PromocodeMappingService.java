@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promocodes.promocodes.api.CategoryGptDto;
 import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.dao.entity.CategoryEntity;
-import com.promocodes.promocodes.dao.entity.CompanyEntity;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.dao.repository.CategoryRepository;
@@ -15,14 +14,17 @@ import com.promocodes.promocodes.dao.repository.PromoCodeRepository;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.utils.YoutubeDataUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class PromocodeMappingService {
     private final RawVideoDataRepository rawVideoDataRepository;
     private final CompanyRepository companyRepository;
@@ -31,6 +33,8 @@ public class PromocodeMappingService {
     private final List<String> needles = List.of("промокодом", "промокоду", "промокод");
 
     private final Set<String> excludeUrlParts = Set.of("clc", "clck", "goo");
+
+    private final CompanyService companyService;
     private final CategoryRepository categoryRepository;
     private final GPTApiService gptApiService;
 
@@ -39,9 +43,9 @@ public class PromocodeMappingService {
     public List<PromoCodeEntity> mapRawDataToPromocodes() {
         List<String> promocodes = rawVideoDataRepository.findAllByPromoCodeIsNotNull().stream()
                 .map(RawVideoDataEntity::getPromoCode).toList();
-        List<String> companyNames = ((List<CompanyEntity>) companyRepository.findAll()).stream()
-                .map(CompanyEntity::getName)
-                .toList();
+//        List<String> companyNames = ((List<CompanyEntity>) companyRepository.findAll()).stream()
+//                .map(CompanyEntity::getName)
+//                .toList();
 
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
         for (String promoCode : promocodes) {
@@ -51,6 +55,20 @@ public class PromocodeMappingService {
         }
 
         return (List<PromoCodeEntity>) promoCodeRepository.saveAll(promoCodeEntities);
+    }
+    //todo первоочередно брать из Базы по урлу находить компанию, если ее нет то парсим и добавляем компанию в БД например тег <meta og:site_name
+    public void fillWithCompanyNames(List<PromoCodeEntity> promoCodeEntities) {
+        for (var promoCodeEntity : promoCodeEntities) {
+            if (promoCodeEntity.getUrl() != null) {
+                try {
+                    String companyName = companyService.followCompanyUrl(promoCodeEntity.getUrl());
+                    promoCodeEntity.setCompanyName(companyName);
+                    promoCodeRepository.save(promoCodeEntity);
+                } catch (IOException e) {
+                    log.error("Error during parsing company site", e);
+                }
+            }
+        }
     }
 
     //TODO: 1. поиск сыылке в списке компаний, если нет то 2. запрос в gpt

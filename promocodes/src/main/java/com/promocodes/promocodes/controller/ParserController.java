@@ -5,7 +5,7 @@ import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.dao.entity.PromoCodeEntity;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
-import com.promocodes.promocodes.service.CompanyDataParser;
+import com.promocodes.promocodes.service.CompanyService;
 import com.promocodes.promocodes.service.PromocodeMappingService;
 import com.promocodes.promocodes.service.YoutubeService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/parse")
 public class ParserController {
-    private final CompanyDataParser companyDataParser;
+    private final CompanyService companyService;
     private final YoutubeService youtubeService;
     private final PromocodeMappingService promocodeMappingService;
     private final GPTApiService gptApiService;
 
     @GetMapping
     public String getPage() throws IOException {
-        return companyDataParser.connect();
+        return companyService.getCompaniesFromSite();
     }
 
 
@@ -40,6 +40,7 @@ public class ParserController {
     @GetMapping("/map-youtube-data")
     public List<PromoCodeEntity> mapYoutubeData() throws JsonProcessingException {
         var promoCodeEntities = promocodeMappingService.mapRawDataToPromocodes();
+        promocodeMappingService.fillWithCompanyNames(promoCodeEntities);
 //        promocodeMappingService.fillCategoryInfo(promoCodeEntities);
         return promoCodeEntities;
     }

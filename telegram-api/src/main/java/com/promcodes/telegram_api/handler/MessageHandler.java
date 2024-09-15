@@ -40,7 +40,11 @@ public class MessageHandler {
     }
 
     private String generateMessageText(PromoCodeEntity promoCodeEntity) {
-        return new StringBuilder().append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
-                .append("Ссылка на сайт:").append(promoCodeEntity.getUrl()).toString();
+        return new StringBuilder()
+                .append("❤\uFE0F").append(promoCodeEntity.getCompanyName() == null ? "ПРОМОКОД" : promoCodeEntity.getCompanyName())
+                .append("\n")
+                .append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
+                .append("Ссылка на сайт:").append(promoCodeEntity.getUrl())
+                .toString();
     }
 }

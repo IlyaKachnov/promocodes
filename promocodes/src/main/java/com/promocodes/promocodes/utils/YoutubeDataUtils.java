@@ -43,12 +43,15 @@ public class YoutubeDataUtils {
     private static int getEndOfUrl(String str, int httpIndex) {
         int index = str.indexOf(" ", httpIndex);
         if (index != -1) {
+            log.info("end of url indexOf empty: {}", index);
             return index;
         }
         index = str.indexOf("\n", httpIndex);
         if (index != -1) {
+            log.info("end of url indexOf newline: {}", index);
             return index;
         }
+        log.info("end of url indexOf endline: {}", index);
         return str.length() - 1;
     }
 
@@ -79,7 +82,9 @@ public class YoutubeDataUtils {
     public static String findPromoUrl(Map<Integer, Paragraph> paragraphs, Paragraph promoParagraph) {
         int httpIndex = promoParagraph.getText().indexOf("http");
         if (httpIndex != -1) {
-            return promoParagraph.getText().substring(httpIndex, getEndOfUrl(promoParagraph.getText(), httpIndex));
+            String result = promoParagraph.getText().substring(httpIndex, getEndOfUrl(promoParagraph.getText(), httpIndex) + 1);
+            log.info("Promo URL found: {}", result);
+            return result;
         }
         int promoOrder = promoParagraph.getOrder();
         int upSearchIndex = promoOrder - 1;
@@ -95,14 +100,18 @@ public class YoutubeDataUtils {
                 Paragraph paragraph = paragraphs.get(upSearchIndex);
                 httpIndex = paragraph.getText().indexOf("http");
                 if (httpIndex != -1) {
-                    return paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex));
+                    String result = paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex) + 1);
+                    log.info("Promo URL upsearch found: {}", result);
+                    return result;
                 }
             }
             if (downSearchIndex < paragraphs.size()) {
                 Paragraph paragraph = paragraphs.get(downSearchIndex);
                 httpIndex = paragraph.getText().indexOf("http");
                 if (httpIndex != -1) {
-                    return paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex));
+                    String result = paragraph.getText().substring(httpIndex, getEndOfUrl(paragraph.getText(), httpIndex) + 1);
+                    log.info("Promo URL downsearch found: {}", result);
+                    return result;
                 }
             }
             upSearchIndex--;
