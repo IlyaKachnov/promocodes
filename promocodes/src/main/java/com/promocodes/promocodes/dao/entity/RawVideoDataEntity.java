@@ -28,6 +28,9 @@ public class RawVideoDataEntity {
     @Column("channel_id")
     private String channelId;
 
+    @Column("channel_name")
+    private String channelName;
+
     @Column("play_list_id")
     private String playListId;
 
