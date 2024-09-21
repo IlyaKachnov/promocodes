@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface RawVideoDataRepository extends CrudRepository<RawVideoDataEntity, Long> {
-    List<RawVideoDataEntity> findAllByPromoCodeIsNotNull();
+    List<RawVideoDataEntity> findAllByPromoCodeIsNotNullAndExecutionId(Long executionId);
 }

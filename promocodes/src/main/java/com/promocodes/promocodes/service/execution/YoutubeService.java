@@ -1,4 +1,4 @@
-package com.promocodes.promocodes.service;
+package com.promocodes.promocodes.service.execution;
 
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ChannelListResponse;
@@ -7,6 +7,7 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
+import com.promocodes.promocodes.dao.repository.ExecutionRepository;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,31 +23,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Service
+@Service("PARSE_RAW_DATA")
 @RequiredArgsConstructor
-public class YoutubeService {
+public class YoutubeService implements ExecutionService {
     private static final Logger log = LoggerFactory.getLogger(YoutubeService.class);
     //todo move to config file
     public static final long RESULTS = 5L;
     private final YouTube youtubeApiService;
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;
+    private final ExecutionRepository executionRepository;
 
     private static final Set<String> needls = Set.of("промокод", "промо");
 
 
-    public List<RawVideoDataEntity> getApiV2() throws IOException {
+    public void execute(Long executionId) throws Exception {
         log.info("Start getting video data");
         List<YoutubeChannelEntity> channelEntities = (List<YoutubeChannelEntity>) youtubeChannelRepository.findAll();
         List<RawVideoDataEntity> promos = new ArrayList<>();
         for (YoutubeChannelEntity channel : channelEntities) {
             log.info("Getting data for channel name = {}, id = {}", channel.getName(), channel.getChannelId());
-            promos.addAll(getPromosByChannelId(channel.getChannelId()));
+            promos.addAll(getPromosByChannelId(channel.getChannelId(), executionId));
         }
-        return (List<RawVideoDataEntity>) rawVideoDataRepository.saveAll(promos);
+        rawVideoDataRepository.saveAll(promos);
+
     }
 
-    private List<RawVideoDataEntity> getPromosByChannelId(String channelId) throws IOException {
+    private List<RawVideoDataEntity> getPromosByChannelId(String channelId, Long executionId) throws IOException {
         log.info("Query youtube API for channel id = {}", channelId);
         final ChannelListResponse channelListResponse = youtubeApiService.channels().list("snippet").setId(channelId)
                 .setPart("contentDetails")
@@ -72,6 +75,7 @@ public class YoutubeService {
                     .channelId(channelId)
                     .playListId(playlistItem.getId())
                     .createdAt(LocalDateTime.now())
+                    .executionId(executionId)
                     .build();
 
             boolean match = needls.stream().anyMatch(description::contains);

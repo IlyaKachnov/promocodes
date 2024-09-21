@@ -1,4 +1,4 @@
-package com.promocodes.promocodes.service;
+package com.promocodes.promocodes.service.execution;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,20 +12,21 @@ import com.promocodes.promocodes.dao.repository.CategoryRepository;
 import com.promocodes.promocodes.dao.repository.CompanyRepository;
 import com.promocodes.promocodes.dao.repository.PromoCodeRepository;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
+import com.promocodes.promocodes.service.CompanyService;
 import com.promocodes.promocodes.utils.YoutubeDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Component
+@Service("GETTING_PROMOS")
 @RequiredArgsConstructor
 @Slf4j
-public class PromocodeMappingService {
+public class PromocodeMappingService implements ExecutionService {
     private final RawVideoDataRepository rawVideoDataRepository;
     private final CompanyRepository companyRepository;
     private final PromoCodeRepository promoCodeRepository;
@@ -40,8 +41,9 @@ public class PromocodeMappingService {
 
     private final ObjectMapper objectMapper;
 
-    public List<PromoCodeEntity> mapRawDataToPromocodes() {
-        List<String> promocodes = rawVideoDataRepository.findAllByPromoCodeIsNotNull().stream()
+    public void execute(Long executionId) {
+        //todo hardcode execId
+        List<String> promocodes = rawVideoDataRepository.findAllByPromoCodeIsNotNullAndExecutionId(executionId).stream()
                 .map(RawVideoDataEntity::getPromoCode).toList();
 //        List<String> companyNames = ((List<CompanyEntity>) companyRepository.findAll()).stream()
 //                .map(CompanyEntity::getName)
@@ -50,12 +52,16 @@ public class PromocodeMappingService {
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
         for (String promoCode : promocodes) {
             if (promoCode != null) {
-                promoCodeEntities.add(YoutubeDataUtils.buildStringV3(promoCode, needles));
+                try {
+                    promoCodeEntities.add(YoutubeDataUtils.createPromoEntity(promoCode, needles));
+                } catch (RuntimeException e) {
+                    log.error("Exception during creating promo code", e);
+                }
             }
         }
-
-        return (List<PromoCodeEntity>) promoCodeRepository.saveAll(promoCodeEntities);
+        promoCodeRepository.saveAll(promoCodeEntities);
     }
+
     //todo первоочередно брать из Базы по урлу находить компанию, если ее нет то парсим и добавляем компанию в БД например тег <meta og:site_name
     public void fillWithCompanyNames(List<PromoCodeEntity> promoCodeEntities) {
         for (var promoCodeEntity : promoCodeEntities) {

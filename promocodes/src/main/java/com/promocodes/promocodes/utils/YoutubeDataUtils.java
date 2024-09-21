@@ -12,7 +12,7 @@ import java.util.Map;
 @Slf4j
 public class YoutubeDataUtils {
 
-    public static PromoCodeEntity buildStringV3(String description, List<String> needles) {
+    public static PromoCodeEntity createPromoEntity(String description, List<String> needles) {
         String needle = needles.get(0);
         for (String needleItem : needles) {
             if (description.contains(needleItem)) {
