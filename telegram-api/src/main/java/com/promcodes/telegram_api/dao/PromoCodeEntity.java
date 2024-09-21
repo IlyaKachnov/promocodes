@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @Table("promo_code")
@@ -24,4 +26,10 @@ public class PromoCodeEntity {
 
     @Column("url")
     private String url;
+
+    @Column("category")
+    private String category;
+
+    @Column("created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

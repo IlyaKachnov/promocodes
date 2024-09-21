@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,26 @@ import java.util.stream.Collectors;
 public class MessageHandler {
     private static final Logger log = LoggerFactory.getLogger(MessageHandler.class);
     private final PromoCodeRepository promoCodeRepository;
+    private final static InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+    static {
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("Получить 5 штук");
+        inlineKeyboardButton1.setCallbackData("/promo");
+        inlineKeyboardButton2.setText("Получить 15 штук");
+        inlineKeyboardButton2.setCallbackData("/promo1");
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        keyboardButtonsRow1.add(inlineKeyboardButton1);
+        keyboardButtonsRow2.add(inlineKeyboardButton2);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow1);
+        rowList.add(keyboardButtonsRow2);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+    }
+
+    private static final Integer LIMIT = 10;
 
     public BotApiMethod<?> answerMessage(Message message) {
         String chatId = message.getChatId().toString();
@@ -27,13 +50,17 @@ public class MessageHandler {
         if (inputText == null) {
             throw new IllegalArgumentException();
         } else if (inputText.equals("/start")) {
-            return new SendMessage(chatId, "Привет, напиши /promo чтобы получить все промокоды");
+            SendMessage sendMessage = new SendMessage(chatId, "Выбери сколько получить промокодов:");
+            sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+            return sendMessage;
         } else if (inputText.equals("/promo")) {
-            List<PromoCodeEntity> first10 = promoCodeRepository.findFirst100();
-            log.info("Found {} promo codes", first10.size());
-            return new SendMessage(chatId, first10.stream()
+            List<PromoCodeEntity> actualPromos = promoCodeRepository.getActualPromos(LIMIT);
+            log.info("Found {} promo codes", actualPromos.size());
+            SendMessage sendMessage = new SendMessage(chatId, actualPromos.stream()
                     .map(this::generateMessageText)
                     .collect(Collectors.joining("\n\n")));
+            sendMessage.setDisableWebPagePreview(true);
+            return sendMessage;
         } else {
             return new SendMessage(chatId, "не знаю такова");
         }

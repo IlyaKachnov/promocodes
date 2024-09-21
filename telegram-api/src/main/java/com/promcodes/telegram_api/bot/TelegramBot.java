@@ -9,11 +9,12 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
 import java.io.IOException;
-
-import static net.sf.jsqlparser.parser.feature.Feature.update;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Setter
@@ -25,11 +26,14 @@ public class TelegramBot extends SpringWebhookBot {
     private String botUsername;
     private String botToken;
 
-    public TelegramBot(SetWebhook setWebhook, MessageHandler messageHandler, CallbackQueryHandler callbackQueryHandler) {
+    public TelegramBot(SetWebhook setWebhook, MessageHandler messageHandler,
+                       CallbackQueryHandler callbackQueryHandler) {
         super(setWebhook);
         this.messageHandler = messageHandler;
         this.callbackQueryHandler = callbackQueryHandler;
     }
+
+
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
@@ -50,8 +54,7 @@ public class TelegramBot extends SpringWebhookBot {
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackQueryHandler.processCallbackQuery(callbackQuery);
-        }
-        else {
+        } else {
             Message message = update.getMessage();
             if (message != null) {
                 return messageHandler.answerMessage(update.getMessage());
@@ -64,8 +67,6 @@ public class TelegramBot extends SpringWebhookBot {
     public String getBotUsername() {
         return "";
     }
-
-
 
 
 }

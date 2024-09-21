@@ -7,7 +7,6 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import com.promocodes.promocodes.dao.entity.RawVideoDataEntity;
 import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
-import com.promocodes.promocodes.dao.repository.ExecutionRepository;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class YoutubeService implements ExecutionService {
     private final YouTube youtubeApiService;
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;
-    private final ExecutionRepository executionRepository;
 
     private static final Set<String> needls = Set.of("промокод", "промо");
 
