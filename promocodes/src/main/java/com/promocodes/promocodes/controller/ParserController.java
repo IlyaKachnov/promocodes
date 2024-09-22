@@ -5,8 +5,8 @@ import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.facade.StartParsingFacade;
 import com.promocodes.promocodes.service.CompanyService;
+import com.promocodes.promocodes.service.execution.AddCompanyDataService;
 import com.promocodes.promocodes.service.execution.PromocodeMappingService;
-import com.promocodes.promocodes.service.execution.YoutubeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +20,11 @@ import java.io.IOException;
 @RequestMapping("/api/v1/parse")
 public class ParserController {
     private final CompanyService companyService;
-    private final YoutubeService youtubeService;
     private final PromocodeMappingService promocodeMappingService;
     private final GPTApiService gptApiService;
     private final StartParsingFacade startParsingFacade;
+
+    private final AddCompanyDataService addCompanyDataService;
 
     @GetMapping
     public String getPage() throws IOException {
@@ -52,5 +53,11 @@ public class ParserController {
     @GetMapping("/find-company-url")
     public ResponseEntity<?> findCompanyUrl() throws IOException {
         return gptApiService.fillCompanyUrl();
+    }
+
+    @GetMapping("/add-company-data")
+    public ResponseEntity<?> addCompanyData() throws Exception {
+        addCompanyDataService.execute(2L);
+        return ResponseEntity.ok().build();
     }
 }

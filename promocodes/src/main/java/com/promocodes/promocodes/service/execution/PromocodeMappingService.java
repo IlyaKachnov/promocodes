@@ -53,7 +53,9 @@ public class PromocodeMappingService implements ExecutionService {
         for (String promoCode : promocodes) {
             if (promoCode != null) {
                 try {
-                    promoCodeEntities.add(YoutubeDataUtils.createPromoEntity(promoCode, needles));
+                    PromoCodeEntity promoEntity = YoutubeDataUtils.createPromoEntity(promoCode, needles);
+                    promoEntity.setExecutionId(executionId);
+                    promoCodeEntities.add(promoEntity);
                 } catch (RuntimeException e) {
                     log.error("Exception during creating promo code", e);
                 }

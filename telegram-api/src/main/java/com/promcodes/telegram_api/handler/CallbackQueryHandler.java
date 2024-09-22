@@ -46,6 +46,7 @@ public class CallbackQueryHandler {
                 .append("❤\uFE0F").append(promoCodeEntity.getCompanyName() == null ? "ПРОМОКОД" : promoCodeEntity.getCompanyName())
                 .append("\n")
                 .append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
+                .append("\uD83D\uDC47\uD83C\uDFFD")
                 .append("Ссылка на сайт:").append(promoCodeEntity.getUrl())
                 .toString();
     }

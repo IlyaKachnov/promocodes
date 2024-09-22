@@ -32,4 +32,7 @@ public class PromoCodeEntity {
 
     @Column("created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column("execution_id")
+    private Long executionId;
 }
