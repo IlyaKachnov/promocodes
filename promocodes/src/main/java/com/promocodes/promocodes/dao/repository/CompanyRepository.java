@@ -16,4 +16,6 @@ public interface CompanyRepository extends CrudRepository<CompanyEntity, Long> {
     @Modifying
     @Query("update company set url =:url where name = :name")
     Optional<CompanyEntity> updateCompany(@Param("url") String url, @Param("name") String name);
+
+    List<CompanyEntity> findAllByCategoryIdIsNull();
 }

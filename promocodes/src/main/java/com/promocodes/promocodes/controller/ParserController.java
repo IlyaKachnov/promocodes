@@ -1,8 +1,8 @@
 package com.promocodes.promocodes.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.api.GPTApiService;
+import com.promocodes.promocodes.dao.entity.CompanyEntity;
 import com.promocodes.promocodes.facade.StartParsingFacade;
 import com.promocodes.promocodes.service.CompanyService;
 import com.promocodes.promocodes.service.execution.AddCompanyDataService;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,19 +46,14 @@ public class ParserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/get-gpt-response")
-    public ResponseEntity<ResponseGpt> getGptResponse() throws IOException {
-        return gptApiService.getGptResponse();
-    }
-
-    @GetMapping("/find-company-url")
-    public ResponseEntity<?> findCompanyUrl() throws IOException {
-        return gptApiService.fillCompanyUrl();
-    }
-
     @GetMapping("/add-company-data")
     public ResponseEntity<?> addCompanyData() throws Exception {
         addCompanyDataService.execute(2L);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/fill-company-category")
+    public ResponseEntity<List<CompanyEntity>> fillCompanyCategory() throws JsonProcessingException {
+        return ResponseEntity.ok(companyService.fillCompanyWithCategory());
     }
 }

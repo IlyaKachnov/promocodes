@@ -9,4 +9,9 @@ public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Lon
 
     @Query("select * from promo_code where promo_code.promo_code is not null order by promo_code.execution_id desc limit :limit ")
     List<PromoCodeEntity> getActualPromos(Integer limit);
+
+    @Query("select count(*) from promo_code where promo_code.execution_id = 2 group by category_id")
+    int countAll();
+
+    List<PromoCodeEntity> findAllByCategory(String category);
 }

@@ -22,11 +22,7 @@ public class CallbackQueryHandler {
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
         final String chatId = buttonQuery.getMessage().getChatId().toString();
         String data = buttonQuery.getData();
-        return switch (data) {
-            case "/promo" -> generateMessage(generateSendMessage(promocodeService.getPromos(5)), chatId);
-            case "/promo1" -> generateMessage(generateSendMessage(promocodeService.getPromos(15)), chatId);
-            default -> generateMessage("Not found", chatId);
-        };
+        return generateMessage(generateSendMessage(promocodeService.getPromos(data)), chatId);
     }
 
     private SendMessage generateMessage(String message, String chatId) {

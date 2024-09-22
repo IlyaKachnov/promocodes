@@ -22,4 +22,10 @@ public class PromocodeService {
     public List<PromoCodeEntity> getPromos(Integer limit) {
         return promoCodeRepository.getActualPromos(limit);
     }
+
+    public List<PromoCodeEntity> getPromos(String category) {
+        return promoCodeRepository.findAllByCategory(category);
+    }
+
+
 }

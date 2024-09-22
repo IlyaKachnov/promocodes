@@ -23,20 +23,28 @@ public class MessageHandler {
     private final PromoCodeRepository promoCodeRepository;
     private final static InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
+
     static {
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Получить 5 штук");
-        inlineKeyboardButton1.setCallbackData("/promo");
-        inlineKeyboardButton2.setText("Получить 15 штук");
-        inlineKeyboardButton2.setCallbackData("/promo1");
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("Музыка и фильмы");
+        inlineKeyboardButton1.setCallbackData("Музыка и фильмы");
+        inlineKeyboardButton2.setText("Электроника");
+        inlineKeyboardButton2.setCallbackData("Электроника");
+
+        inlineKeyboardButton3.setText("Туризм и путешествия");
+        inlineKeyboardButton3.setCallbackData("Туризм и путешествия");
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         keyboardButtonsRow1.add(inlineKeyboardButton1);
         keyboardButtonsRow2.add(inlineKeyboardButton2);
+        keyboardButtonsRow3.add(inlineKeyboardButton3);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
+        rowList.add(keyboardButtonsRow3);
         inlineKeyboardMarkup.setKeyboard(rowList);
     }
 

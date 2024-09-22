@@ -28,7 +28,6 @@ import java.util.Set;
 @Slf4j
 public class PromocodeMappingService implements ExecutionService {
     private final RawVideoDataRepository rawVideoDataRepository;
-    private final CompanyRepository companyRepository;
     private final PromoCodeRepository promoCodeRepository;
 
     private final List<String> needles = List.of("промокодом", "промокоду", "промокод");
@@ -36,10 +35,6 @@ public class PromocodeMappingService implements ExecutionService {
     private final Set<String> excludeUrlParts = Set.of("clc", "clck", "goo");
 
     private final CompanyService companyService;
-    private final CategoryRepository categoryRepository;
-    private final GPTApiService gptApiService;
-
-    private final ObjectMapper objectMapper;
 
     public void execute(Long executionId) {
         //todo hardcode execId
@@ -79,46 +74,4 @@ public class PromocodeMappingService implements ExecutionService {
         }
     }
 
-    //TODO: 1. поиск сыылке в списке компаний, если нет то 2. запрос в gpt
-    public List<PromoCodeEntity> fillCategoryInfo(List<PromoCodeEntity> promoCodeEntities) throws JsonProcessingException {
-        List<String> resultUrls = promoCodeEntities.stream()
-                .map(PromoCodeEntity::getUrl).filter(url -> {
-                    if (url == null) {
-                        return false;
-                    }
-                    for (var excludeUrl : excludeUrlParts) {
-                        if (url.contains(excludeUrl)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }).toList();
-
-        var categoryList = ((List<CategoryEntity>) categoryRepository.findAll()).stream().map(CategoryEntity::getName).toList();
-        var response = gptApiService.getGptResponse("category_prompt2", categoryList, resultUrls);
-        var message = response.getBody().getChoices().get(0).getMessage();
-
-        List<CategoryGptDto> categoryGptDtos = objectMapper.readValue(message.getContent(), new TypeReference<>() {
-        });
-
-        List<PromoCodeEntity> updateEntities = new ArrayList<>();
-        for (var categoryGptDto : categoryGptDtos) {
-            var promoCodeEntity = promoCodeRepository.updatePromoCode(categoryGptDto.getCategory(), categoryGptDto.getUrl());
-            updateEntities.add(promoCodeEntity);
-        }
-
-        return updateEntities;
-
-    }
-
-    //todo смотреть маппинг по ссылкам (https://company.ru) -> segment1 if seg1.seg2 -> seg2
-    // забирать все вкдючая по ссылку
-    private String containsWords(String inputString, List<String> items) {
-        for (String item : items) {
-            if (inputString.contains(item)) {
-                return item;
-            }
-        }
-        return "NOT_FOUND";
-    }
 }
