@@ -44,6 +44,6 @@ jobs:
     - name: Tag & publish to GitHub Container Registry
       run: |
         IMAGE_ID=ghcr.io/$OWNER_LC/$IMAGE_NAME
-        VERSION=latest
+        VERSION=0.0.1-SNAPSHOT
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
