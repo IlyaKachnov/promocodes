@@ -7,10 +7,13 @@ on:
   release:
     paths:
       - 'promocodes/promocodes/**'
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: promocodes
     permissions:
       contents: read
       packages: write
