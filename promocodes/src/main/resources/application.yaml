@@ -11,9 +11,11 @@ spring:
 service:
   scheduler:
     cron: "0 0 4 * * ?"
+  youtube:
+    key: YOTUBE_API_KEY
 logging:
   level:
     root: info
 
 gpt:
-  auth-token:
+  auth-token: GPT_TOKEN

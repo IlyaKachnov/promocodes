@@ -118,8 +118,6 @@
                                 <sourcePath>${project.basedir}/src/main/resources/prompts/request_gpt.json</sourcePath>
                             </sourcePaths>
                             <sourceType>json</sourceType>
-                            <outputDirectory>src/main/java</outputDirectory>
-                            <targetPackage>com.gptapi.request</targetPackage>
                         </configuration>
                         <goals>
                             <goal>generate</goal>
@@ -134,8 +132,6 @@
                                 <sourcePath>${project.basedir}/src/main/resources/prompts/response_gpt.json</sourcePath>
                             </sourcePaths>
                             <sourceType>json</sourceType>
-                            <outputDirectory>src/main/java</outputDirectory>
-                            <targetPackage>com.gptapi.response</targetPackage>
                         </configuration>
                         <goals>
                             <goal>generate</goal>
@@ -151,8 +147,6 @@
                                 <sourcePath>${project.basedir}/src/main/resources/prompts/access_token_response.json</sourcePath>
                             </sourcePaths>
                             <sourceType>json</sourceType>
-                            <outputDirectory>src/main/java</outputDirectory>
-                            <targetPackage>com.gptapi.response</targetPackage>
                         </configuration>
                         <goals>
                             <goal>generate</goal>
