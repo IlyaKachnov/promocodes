@@ -7,6 +7,8 @@ on:
   release:
     paths:
       - 'promocodes/promocodes/**'
+env:
+  IMAGE_NAME: promocodes
 
 jobs:
   build:
