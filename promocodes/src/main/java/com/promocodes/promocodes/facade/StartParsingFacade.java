@@ -6,6 +6,7 @@ import com.promocodes.promocodes.dao.repository.ExecutionRepository;
 import com.promocodes.promocodes.model.ParseDataEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,9 @@ public class StartParsingFacade {
     private final ExecutionRepository executionRepository;
     private final EventHandler eventHandler;
 
+    @Scheduled(cron = "${service.scheduler.cron}")
     public void startParsing() {
+        log.info("Starting parsing...");
         ExecutionEntity executionEntity = new ExecutionEntity();
         executionEntity.setStatus(ExecutionStatus.IN_PROGRESS);
         executionEntity.setCreatedAt(LocalDateTime.now());
@@ -27,7 +30,12 @@ public class StartParsingFacade {
                     .executionId(executionEntity.getId())
                     .status(ParseDataEvent.EventStatus.PARSE_RAW_DATA)
                     .build();
+            log.info("Start first step");
             eventHandler.handle(parseDataEvent);
+
+            savedExecution.setStatus(ExecutionStatus.FINISHED);
+            executionRepository.save(savedExecution);
+            log.info("Finished parsing");
         } catch (Exception e) {
             log.error("Exception occurred while getting video data", e);
             savedExecution.setStatus(ExecutionStatus.ERROR);

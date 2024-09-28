@@ -6,3 +6,12 @@ spring:
     password: passw0rd
     url: jdbc:postgresql://localhost:5432/promo_codes
     username: postgres
+service:
+  scheduler:
+    cron: "0 0 4 * * ?"
+logging:
+  level:
+    root: info
+
+gpt:
+  auth-token:

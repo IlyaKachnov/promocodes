@@ -27,7 +27,7 @@ import java.util.Set;
 public class YoutubeService implements ExecutionService {
     private static final Logger log = LoggerFactory.getLogger(YoutubeService.class);
     //todo move to config file
-    public static final long RESULTS = 5L;
+    public static final long RESULTS = 2L;
     private final YouTube youtubeApiService;
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;

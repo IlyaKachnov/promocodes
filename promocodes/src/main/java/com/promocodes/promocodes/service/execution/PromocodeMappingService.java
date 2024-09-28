@@ -38,18 +38,19 @@ public class PromocodeMappingService implements ExecutionService {
 
     public void execute(Long executionId) {
         //todo hardcode execId
-        List<String> promocodes = rawVideoDataRepository.findAllByPromoCodeIsNotNullAndExecutionId(executionId).stream()
-                .map(RawVideoDataEntity::getPromoCode).toList();
+        List<RawVideoDataEntity> rawVideoDataEntities = rawVideoDataRepository.findAllByPromoCodeIsNotNullAndExecutionId(executionId).stream()
+                .toList();
 //        List<String> companyNames = ((List<CompanyEntity>) companyRepository.findAll()).stream()
 //                .map(CompanyEntity::getName)
 //                .toList();
 
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
-        for (String promoCode : promocodes) {
-            if (promoCode != null) {
+        for (RawVideoDataEntity rawVideoDataEntity : rawVideoDataEntities) {
+            if (rawVideoDataEntity.getPromoCode() != null) {
                 try {
-                    PromoCodeEntity promoEntity = YoutubeDataUtils.createPromoEntity(promoCode, needles);
+                    PromoCodeEntity promoEntity = YoutubeDataUtils.createPromoEntity(rawVideoDataEntity.getPromoCode(), needles);
                     promoEntity.setExecutionId(executionId);
+                    promoEntity.setPublishedDate(rawVideoDataEntity.getPublishedDate());
                     promoCodeEntities.add(promoEntity);
                 } catch (RuntimeException e) {
                     log.error("Exception during creating promo code", e);
