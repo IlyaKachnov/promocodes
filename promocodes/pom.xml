@@ -91,6 +91,12 @@
             <version>1.2.1</version>
         </dependency>
 
+        <!-- Liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

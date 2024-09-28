@@ -4,8 +4,10 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     password: passw0rd
-    url: jdbc:postgresql://localhost:5432/promo_codes
+    url: jdbc:postgresql://localhost:5432/promo_codes2
     username: postgres
+  liquibase:
+    change-log: classpath:liquibase/changelog.xml
 service:
   scheduler:
     cron: "0 0 4 * * ?"
