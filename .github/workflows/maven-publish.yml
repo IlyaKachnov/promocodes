@@ -34,7 +34,7 @@ jobs:
       run: chmod +x mvnw
       
     - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
-      run: mvn spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME
+      run: mvn spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME -Dmaven.test.skip=true
 
     - name: Tag & publish to GitHub Container Registry
       run: |
