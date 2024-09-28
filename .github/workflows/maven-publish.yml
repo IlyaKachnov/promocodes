@@ -37,10 +37,14 @@ jobs:
       
     - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
       run: mvn spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME -Dmaven.test.skip=true
-
+    - name: set lower case owner name
+      run: |
+        echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+      env:
+        OWNER: '${{ github.repository_owner }}'
     - name: Tag & publish to GitHub Container Registry
       run: |
-        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+        IMAGE_ID=ghcr.io/$OWNER/$IMAGE_NAME
         VERSION=latest
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
