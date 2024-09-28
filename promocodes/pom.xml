@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.promocodes</groupId>
     <artifactId>promocodes</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>latest</version>
     <name>promocodes</name>
     <description>Promocodes</description>
     <properties>
