@@ -4,7 +4,7 @@
 name: Maven Package Promocodes
 
 on:
-  release:
+  push:
     paths:
       - 'promocodes/promocodes/**'
 env:
