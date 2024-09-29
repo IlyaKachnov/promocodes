@@ -42,6 +42,7 @@ jobs:
         context: promocodes/
         dockerfile: promocodes/Dockerfile
         push: false
+        tags: $IMAGE_NAME:$VERSION
     - name: set lower case owner name
       run: |
         echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
