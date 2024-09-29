@@ -1,0 +1,7 @@
+services:
+  back:
+    build: .
+    image: promocodes
+    container_name: promocodes
+    ports:
+      - "8081:8081"
