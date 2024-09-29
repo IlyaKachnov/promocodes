@@ -1,7 +1,9 @@
 services:
   back:
-    build: .
-    image: promocodes
+    build: ./promocodes
+    image: promocodes:latest
     container_name: promocodes
+#    depends_on:
+#      - postgres
     ports:
       - "8081:8081"

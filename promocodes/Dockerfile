@@ -1,11 +1,21 @@
+#build stage
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+WORKDIR /build
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+#runtime
+
+ENV YOTUBE_API_KEY=YOTUBE_API_KEY
+ENV GPT_TOKEN=GPT_TOKEN
+ENV POSTGRES_PASSWORD=passw0rd
+
 FROM eclipse-temurin:21
 WORKDIR /app
-COPY .mvn/ ./mvn
+COPY --from=build /build/target/promocodes-*.jar /app
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+EXPOSE 8081
 
-COPY src ./src
-
-CMD ["./mvnw", "mvn spring-boot:build-image -Dmodule.image.name=promocodes -Dmaven.test.skip=true"]
+CMD java -jar promocodes-latest.jar

@@ -1,0 +1,72 @@
+name: Promocodes pipeline
+on:
+  push:
+    branches:
+    - main
+    paths:
+      - promocodes/**
+      - .github/workflows/**
+jobs:
+  compile:
+    runs-on: ubuntu
+    name: Compile project
+    steps:
+      - name: checkout code
+        uses: action/checkout@v4
+        with:
+          fetch-dept: 0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Compile project
+        run: |
+          cd promocodes
+          ./mvnw clean compile
+
+  build:
+    runs-on: ubuntu
+    name: Build project
+    needs: [compile]
+    steps:
+      - name: checkout code
+        uses: action/checkout@v4
+        with:
+          fetch-dept: 0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Compile project
+        run: |
+          cd promocodes
+          ./mvnw clean package
+  build-image:
+    runs-on: ubuntu
+    name: Build image
+    needs: [build]
+    steps:
+      - name: checkout code
+        uses: action/checkout@v4
+        with:
+          fetch-dept: 0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Extract project version
+        id: extract_version
+        run: |
+          cd book-network
+          echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+#
+
