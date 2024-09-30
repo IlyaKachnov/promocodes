@@ -68,5 +68,35 @@ jobs:
         run: |
           cd book-network
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
-#
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
+      - name: build the docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: promocodes/
+          dockerfile: promocodes/Dockerfile
+          push: false
+          tags: promocodes:latest
+  deploy:
+    name: Deploy project
+    runs-on: self-hosted
+    needs: [build-image]
+    steps:
+      - name: Create deployment folder
+        run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
+      - name: Copy docker-compose file
+        run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+
+      - name: Set ENV variable and deploy
+        run: |
+          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
+          export GPT_TOKEN=${{ secrets.GPT_TOKEN }}
+          export YOTUBE_API_KEY=${{ secrets.YOTUBE_API_KEY }}
+          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          cd ci-cd
+          docker compose -f docker-compose.yml pull -q
+          docker compose -f docker-compose.yml up -d
+          EOF
 
