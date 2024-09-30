@@ -32,7 +32,6 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Compile project
         run: |
-          cd promocodes
           ./mvnw clean compile
 
   build:
@@ -51,7 +50,6 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Compile project
         run: |
-          cd promocodes
           ./mvnw clean package
   build-image:
     runs-on: ubuntu-latest
@@ -60,8 +58,6 @@ jobs:
     steps:
       - name: checkout code
         uses: action/checkout@v4
-        with:
-          fetch-dept: 0
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
