@@ -1,41 +1,29 @@
-name: Promocodes pipeline
-on:
-  push:
-    branches:
-    - main
-    paths:
-      - promocodes/**
-      - .github/workflows/**
-jobs:
-  compile:
-    runs-on: ubuntu
-    name: Compile project
-    steps:
-      - name: checkout code
-        uses: action/checkout@v4
-        with:
-          fetch-dept: 0
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Compile project
-        run: |
-          cd promocodes
-          ./mvnw clean compile
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
+name: Maven Package Promocodes
+
+on:
+  release:
+    paths:
+      - 'promocodes/promocodes/**'
+env:
+  IMAGE_NAME: promocodes
+  OWNER: '${{ github.repository_owner }}'
+  VERSION: latest
+
+jobs:
   build:
-    runs-on: ubuntu
-    name: Build project
-    needs: [compile]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: promocodes
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: checkout code
-        uses: action/checkout@v4
-        with:
-          fetch-dept: 0
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -43,31 +31,7 @@ jobs:
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Compile project
-        run: |
-          cd promocodes
-          ./mvnw clean package
-  build-image:
-    runs-on: ubuntu
-    name: Build image
-    needs: [build]
-    steps:
-      - name: checkout code
-        uses: action/checkout@v4
-        with:
-          fetch-dept: 0
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Extract project version
-        id: extract_version
-        run: |
-          cd book-network
-          echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Grant execute permission for mvnw
@@ -79,24 +43,26 @@ jobs:
           dockerfile: promocodes/Dockerfile
           push: false
           tags: promocodes:latest
-  deploy:
-    name: Deploy project
-    runs-on: self-hosted
-    needs: [build-image]
-    steps:
-      - name: Create deployment folder
-        run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
-      - name: Copy docker-compose file
-        run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-
-      - name: Set ENV variable and deploy
+      - name: set lower case owner name
         run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
-          export GPT_TOKEN=${{ secrets.GPT_TOKEN }}
-          export YOTUBE_API_KEY=${{ secrets.YOTUBE_API_KEY }}
-          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          cd ci-cd
-          docker compose -f docker-compose.yml pull -q
-          docker compose -f docker-compose.yml up -d
-          EOF
-
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+      - name: Tag & publish to GitHub Container Registry
+        run: |
+          IMAGE_ID=ghcr.io/$OWNER_LC/$IMAGE_NAME
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: Stop and remove containers, networks
+        run: docker-compose down
+      - name: Stop and remove containers, networks
+        run: docker rm -vf $(docker ps -aq)
+      - name: Remove unused data
+        run: docker system prune -a -f
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: docker-compose
+        run: docker-compose up -d
