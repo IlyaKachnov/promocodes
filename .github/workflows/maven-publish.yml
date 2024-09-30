@@ -5,7 +5,7 @@ on:
       - main
       - master
     paths:
-      - promocodes/promocdes/**
+      - promocodes/promocodes/**
       - .github/workflows/**
 env:
   IMAGE_NAME: promocodes
