@@ -51,18 +51,3 @@ jobs:
           IMAGE_ID=ghcr.io/$OWNER_LC/$IMAGE_NAME
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-  deploy:
-    runs-on: self-hosted
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v3
-      - name: Stop and remove containers, networks
-        run: docker-compose down
-      - name: Stop and remove containers, networks
-        run: docker rm -vf $(docker ps -aq)
-      - name: Remove unused data
-        run: docker system prune -a -f
-      - name: checkout repo
-        uses: actions/checkout@v3
-      - name: docker-compose
-        run: docker-compose up -d
