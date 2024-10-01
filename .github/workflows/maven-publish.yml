@@ -94,20 +94,12 @@ jobs:
   deploy:
     name: Deploy project
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: promocodes
-    permissions:
-      contents: read
-      packages: write
     needs: [ build-image ]
     steps:
       - name: Create deployment folder
         run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
       - name: Copy docker-compose file
         run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-      - name: Grant execute permission for mvnw
-        run: chmod +x mvnw
       - name: Set ENV variable and deploy
         run: |
           ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
