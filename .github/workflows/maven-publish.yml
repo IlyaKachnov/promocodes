@@ -91,7 +91,7 @@ jobs:
         with:
           context: promocodes/
           dockerfile: promocodes/Dockerfile
-          push: true
+          push: false
           tags: promocodes:latest
       - name: set lower case owner name
         run: |
