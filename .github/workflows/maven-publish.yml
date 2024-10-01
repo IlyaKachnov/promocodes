@@ -12,10 +12,15 @@ env:
   OWNER: '${{ github.repository_owner }}'
   VERSION: latest
 jobs:
-  build:
+  build-image:
+    defaults:
+      run:
+        working-directory: promocodes
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     name: Build image
-    needs: [build]
     steps:
       - name: checkout code
         uses: action/checkout@v4
@@ -45,7 +50,7 @@ jobs:
   deploy:
     name: Deploy project
     runs-on: self-hosted
-    needs: [build]
+    needs: [build-image]
     steps:
       - name: Create deployment folder
         run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
