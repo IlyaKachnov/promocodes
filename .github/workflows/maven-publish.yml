@@ -89,7 +89,7 @@ jobs:
         with:
           context: promocodes/
           dockerfile: promocodes/Dockerfile
-          push: false
+          push: true
           tags: promocodes:latest
   deploy:
     name: Deploy project
