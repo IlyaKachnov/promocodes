@@ -107,9 +107,7 @@ jobs:
         run: |
           pwd
           ls 
-          cd ..
-          ls
-          cd ..
+          cd promocodes
           ls
           scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
       - name: Set ENV variable and deploy
