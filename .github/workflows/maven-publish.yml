@@ -12,15 +12,34 @@ env:
   OWNER: '${{ github.repository_owner }}'
   VERSION: latest
 jobs:
-  build-image:
+  compile:
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: promocodes
     permissions:
       contents: read
       packages: write
+    name: Compile project
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
+      - name: Compile project
+        run: |
+          ./mvnw clean compile
+
+  build:
     runs-on: ubuntu-latest
-    name: Build image
+    name: Build project
+    needs: [compile]
     steps:
       - name: checkout code
         uses: action/checkout@v4
@@ -33,6 +52,23 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Grant execute permission for mvnw
         run: chmod +x mvnw
+      - name: Compile project
+        run: |
+          ./mvnw clean package
+  build-image:
+    runs-on: ubuntu-latest
+    name: Build image
+    needs: [build]
+    steps:
+      - name: checkout code
+        uses: action/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Extract project version
         id: extract_version
         run: |
@@ -56,7 +92,8 @@ jobs:
         run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
       - name: Copy docker-compose file
         run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
       - name: Set ENV variable and deploy
         run: |
           ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
