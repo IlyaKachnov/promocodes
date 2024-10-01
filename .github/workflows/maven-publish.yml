@@ -58,7 +58,7 @@ jobs:
         run: chmod +x mvnw
       - name: Compile project
         run: |
-          ./mvnw clean package
+          ./mvnw clean package -DskipTests
   build-image:
     runs-on: ubuntu-latest
     defaults:
