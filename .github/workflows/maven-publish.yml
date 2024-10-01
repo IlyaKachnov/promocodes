@@ -46,8 +46,7 @@ jobs:
     name: Build project
     needs: [ compile ]
     steps:
-      - name: checkout code
-        uses: action/checkout@v4
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -71,8 +70,7 @@ jobs:
     name: Build image
     needs: [ build ]
     steps:
-      - name: checkout code
-        uses: action/checkout@v4
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
