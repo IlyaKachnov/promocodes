@@ -111,20 +111,17 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VPS_IP }} > ~/.ssh/known_hosts
-      - name: Create deployment folder
-        run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
-      - name: Copy docker-compose file
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      - name: create docker compose config
         run: |
-          cd ..
-          scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-      - name: Set ENV variable and deploy
-        run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
-          export GPT_TOKEN=${{ secrets.GPT_TOKEN }}
-          export YOTUBE_API_KEY=${{ secrets.YOTUBE_API_KEY }}
-          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          cd ci-cd
-          docker compose -f docker-compose.yml pull -q
-          docker compose -f docker-compose.yml up -d
-          EOF
+          cat docker-compose.yml | envsubst > docker-compose-secret.yml
+      - name: copy docker compose config
+        run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
+      - name: connect and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d && exit"
+      - name: cleanup config
+        if: always()
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm docker-compose.yml"
+      - name: cleanup keys
+        if: always()
+        run: rm -rf ~/.ssh docker-compose-secret.yml
