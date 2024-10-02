@@ -118,7 +118,7 @@ jobs:
 #      - name: copy docker compose config
 #        run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
       - name: copy docker compose
-        run: scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
+        run: scp docker-compose.yml -f /home/$OWNER_LC/$IMAGE_NAME/docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
       - name: connect and pull
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d && exit"
 #      - name: cleanup config
