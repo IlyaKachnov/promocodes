@@ -70,7 +70,11 @@ jobs:
       - name: copy docker compose config
         run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
       - name: connect and pull
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d && exit"
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose down && docker system prune -a -f && docker-compose pull && docker-compose up -d && exit"
+          export YOTUBE_API_KEY=${{ secrets.YOTUBE_API_KEY }}
+                 export GPT_TOKEN=${{ secrets.GPT_TOKEN }}
+                 export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
       - name: cleanup config
         if: always()
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm docker-compose.yml"
