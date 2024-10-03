@@ -12,7 +12,7 @@ service:
   scheduler:
     cron: "0 0 4 * * ?"
   youtube:
-    key: ${YOTUBE_API_KEY}
+    key: ${YOUTUBE_API_KEY}
 logging:
   level:
     root: info
