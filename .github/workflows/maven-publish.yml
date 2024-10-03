@@ -101,7 +101,6 @@ jobs:
           IMAGE_ID=ghcr.io/$OWNER_LC/$IMAGE_NAME
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
   deploy:
     name: Deploy project
     runs-on: ubuntu-latest
