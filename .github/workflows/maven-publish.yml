@@ -70,11 +70,12 @@ jobs:
       - name: copy docker compose config
         run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
       - name: connect and pull
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          GPT_TOKEN: ${{ secrets.GPT_TOKEN }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF 
-          export YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}
-          export GPT_TOKEN=${{ secrets.GPT_TOKEN }}
-          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           docker-compose down 
           docker system prune -a -f 
           docker-compose pull 
