@@ -1,8 +1,7 @@
 version: "3"
 services:
   back:
-    build: ./promocodes
-    image: promocodes:latest
+    image: ghcr.io/ilyakachnov/promocodes:latest
     container_name: promocodes
 #    depends_on:
 #      - postgres
