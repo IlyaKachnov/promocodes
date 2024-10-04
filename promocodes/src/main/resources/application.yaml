@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: ${POSTGRES_PASSWORD}
+    password: passw0rd
     url: jdbc:postgresql://localhost:5432/promo_codes2
     username: postgres
   liquibase:
@@ -12,10 +12,10 @@ service:
   scheduler:
     cron: "0 0 4 * * ?"
   youtube:
-    key: ${YOUTUBE_API_KEY}
+    key: key
 logging:
   level:
     root: info
 
 gpt:
-  auth-token: ${GPT_TOKEN}
+  auth-token: token
