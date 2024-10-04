@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     password: passw0rd
-    url: jdbc:postgresql://localhost:5432/promo_codes2
+    url: jdbc:postgresql://db:5432/postgres
     username: postgres
   liquibase:
     change-log: classpath:liquibase/changelog.xml
