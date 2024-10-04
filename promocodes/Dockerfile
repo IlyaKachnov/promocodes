@@ -8,6 +8,10 @@ RUN mvn clean package -DskipTests
 
 #runtime
 
+ENV YOUTUBE_API_KEY: YOUTUBE_API_KEY
+ENV GPT_TOKEN: GPT_TOKEN
+ENV POSTGRES_PASSWORD: passw0rd
+
 FROM eclipse-temurin:21
 WORKDIR /app
 COPY --from=build /build/target/promocodes-*.jar /app
