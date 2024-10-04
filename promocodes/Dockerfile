@@ -8,9 +8,9 @@ RUN mvn clean package -DskipTests
 
 #runtime
 
-ENV YOUTUBE_API_KEY=$YOUTUBE_API_KEY
-ENV GPT_TOKEN=$GPT_TOKEN
-ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+ENV YOUTUBE_API_KEY: missing_password
+ENV GPT_TOKEN: missing_password
+ENV POSTGRES_PASSWORD: missing_password
 
 FROM eclipse-temurin:21
 WORKDIR /app

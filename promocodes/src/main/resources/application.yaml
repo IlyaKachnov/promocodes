@@ -18,4 +18,4 @@ logging:
     root: info
 
 gpt:
-  auth-token: token
+  auth-token: ${GPT_TOKEN}
