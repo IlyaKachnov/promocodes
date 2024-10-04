@@ -58,7 +58,7 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
   deploy:
-    name: deploy project
+    name: Deploy project
     runs-on: ubuntu-latest
     needs: [ build ]
     steps:
