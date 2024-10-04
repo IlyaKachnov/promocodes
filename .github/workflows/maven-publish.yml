@@ -27,6 +27,12 @@ jobs:
     name: Build image
     steps:
       - uses: actions/checkout@v4
+      - name: Update youtube api
+        run: sed -i 's/$YOUTUBE_API_KEY/${{ secrets.YOUTUBE_API_KEY }}/' src/main/resources/application.yaml
+      - name: Update youtube api
+        run: sed -i 's/$GPT_TOKEN/ ${{ secrets.GPT_TOKEN }}/' src/main/resources/application.yaml
+      - name: Update youtube api
+        run: sed -i 's/$POSTGRES_PASSWORD/${{ secrets.POSTGRES_PASSWORD }}/' src/main/resources/application.yaml
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
