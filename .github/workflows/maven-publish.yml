@@ -15,9 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      GPT_TOKEN: ${{ secrets.GPT_TOKEN }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      GPT_TOKEN: GPT_TOKEN
     defaults:
       run:
         working-directory: promocodes
