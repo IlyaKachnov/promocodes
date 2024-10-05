@@ -3,11 +3,11 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: passw0rd
-    url: jdbc:postgresql://localhost:5432/promo_codes
+    password: <db_password>
+    url: jdbc:postgresql://79.174.82.98:5432/promocodes
     username: postgres
 telegram:
   api-url: https://api.telegram.org/
-  webhook-path: "https://302c-2a0a-8f40-8-3002-9ae3-12e7-4c8-2a25.ngrok-free.app"
+  webhook-path: "http://79.174.82.98:8082"
   bot-name: "Promocode_App_Bot"
-  bot-token: BOT_TOKEN
+  bot-token: <bot_token>
