@@ -18,4 +18,4 @@ COPY --from=build /build/target/promocodes-*.jar /app
 
 EXPOSE 8081
 
-CMD java -jar promocodes-latest.jar
+ENTRYPOINT ["java","-jar","promocodes-latest.jar"]
