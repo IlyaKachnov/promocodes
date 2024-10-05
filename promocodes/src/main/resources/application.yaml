@@ -18,6 +18,5 @@ logging:
     root: info
   file:
     path: logs
-
 gpt:
   auth-token: <gpt_api>
