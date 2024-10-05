@@ -83,7 +83,7 @@ jobs:
           EOF
       - name: cleanup config
         if: always()
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm docker-compose.yml"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm docker-compose-api.yml"
       - name: cleanup keys
         if: always()
         run: rm -rf ~/.ssh docker-compose-secret.yml
