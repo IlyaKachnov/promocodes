@@ -71,7 +71,7 @@ jobs:
         run: |
           cat docker-compose.yml | envsubst > docker-compose-secret.yml
       - name: copy docker compose config
-        run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
+        run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose-api.yml
       - name: connect and pull
 
         run: |
