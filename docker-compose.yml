@@ -4,9 +4,9 @@ services:
     image: ghcr.io/ilyakachnov/promocodes:latest
     container_name: promocodes
     environment:
-      - GPT_API = GPT_API
-#    depends_on:
-#      - postgres
+      GPT_API: ${GPT_API}
+    #    depends_on:
+    #      - postgres
     ports:
       - "8081:8081"
   db:
