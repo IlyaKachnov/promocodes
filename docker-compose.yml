@@ -9,7 +9,7 @@ services:
       - "8081:8081"
   db:
     image: 'postgres:latest'
-    container_name: postgres_db
+    container_name: promo_db
     ports:
       - "5432:5432"
     environment:
