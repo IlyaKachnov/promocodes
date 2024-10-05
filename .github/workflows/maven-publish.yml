@@ -52,7 +52,7 @@ jobs:
           dockerfile: promocodes/Dockerfile
           push: false
           tags: promocodes:latest
-      - name: Set lower case owner name
+      - name: set lower case owner name
         run: |
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
       - name: Tag & publish to GitHub Container Registry
