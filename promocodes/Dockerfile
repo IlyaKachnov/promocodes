@@ -7,7 +7,6 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 #runtime
-
 ENV YOUTUBE_API_KEY: missing_password
 ENV GPT_TOKEN: missing_password
 ENV POSTGRES_PASSWORD: missing_password
