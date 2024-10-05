@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: passw0rd
+    password: <db_password>
     url: jdbc:postgresql://79.174.82.98:5432/postgres
     username: postgres
   liquibase:
@@ -12,7 +12,7 @@ service:
   scheduler:
     cron: "0 0 4 * * ?"
   youtube:
-    key: key
+    key: <youtube_api_key>
 logging:
   level:
     root: info
