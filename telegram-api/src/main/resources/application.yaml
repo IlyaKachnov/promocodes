@@ -8,6 +8,6 @@ spring:
     username: postgres
 telegram:
   api-url: https://api.telegram.org/
-  webhook-path: "https://79.174.82.98:8082"
+  webhook-path: "http://79.174.82.98:8082"
   bot-name: "Promocode_App_Bot"
   bot-token: <bot_token>
