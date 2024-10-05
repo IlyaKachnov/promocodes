@@ -1,5 +1,7 @@
-api:
-  image: ghcr.io/ilyakachnov/telegram-api:latest
-  container_name: telegram-api
-  ports:
-    - "8082:8082"
+version: "3"
+services:
+  api:
+    image: ghcr.io/ilyakachnov/telegram-api:latest
+    container_name: telegram-api
+    ports:
+      - "8082:8082"
