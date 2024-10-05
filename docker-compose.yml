@@ -4,7 +4,7 @@ services:
     image: ghcr.io/ilyakachnov/promocodes:latest
     container_name: promocodes
     environment:
-      - GPT_API = ${{ secrets.GPT_API }}
+      - GPT_API = GPT_API
 #    depends_on:
 #      - postgres
     ports:
