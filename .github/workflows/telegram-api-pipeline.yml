@@ -1,12 +1,13 @@
 name: Telegram-API pipeline
 on:
-  push:
-    branches:
-      - main
-      - master
-    paths:
-      - telegram-api/**
-      - .github/workflows/**
+  workflow_dispatch:
+#  push:
+#    branches:
+#      - main
+#      - master
+#    paths:
+#      - telegram-api/**
+#      - .github/workflows/**
 env:
   IMAGE_NAME: telegram-api
   OWNER: '${{ github.repository_owner }}'

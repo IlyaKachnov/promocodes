@@ -1,12 +1,13 @@
 name: Promocodes pipeline
 on:
-  push:
-    branches:
-      - main
-      - master
-    paths:
-      - promocodes/**
-      - .github/workflows/**
+  workflow_dispatch:
+#  push:
+#    branches:
+#      - main
+#      - master
+#    paths:
+#      - promocodes/**
+#      - .github/workflows/**
 env:
   IMAGE_NAME: promocodes
   OWNER: '${{ github.repository_owner }}'
@@ -14,7 +15,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: manual
     defaults:
       run:
         working-directory: promocodes
@@ -62,7 +62,6 @@ jobs:
   deploy:
     name: Deploy project
     runs-on: ubuntu-latest
-    environment: manual
     needs: [ build ]
     steps:
       - uses: actions/checkout@v4
