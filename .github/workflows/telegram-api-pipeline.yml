@@ -27,6 +27,7 @@ jobs:
       - name: Update env vars
         run: |
           sed -i 's/<bot_token>/${{ secrets.BOT_TOKEN }}/' src/main/resources/application.yaml
+          sed -i 's/<db_password>/${{ secrets.DB_PASSWORD }}/' src/main/resources/application.yaml
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
