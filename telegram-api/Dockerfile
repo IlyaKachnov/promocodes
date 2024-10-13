@@ -1,6 +1,6 @@
 #build stage
 FROM maven:3.9.9-eclipse-temurin-21 AS build
-WORKDIR /build2
+WORKDIR /build
 COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src ./src
