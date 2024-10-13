@@ -8,8 +8,8 @@ RUN mvn clean package -DskipTests
 
 #runtime
 FROM eclipse-temurin:21
-WORKDIR /app2
-COPY --from=build /build/target/telegram-api-*.jar /app2
+WORKDIR /app
+COPY --from=build /build/target/telegram-api-*.jar /app
 
 EXPOSE 8082
 

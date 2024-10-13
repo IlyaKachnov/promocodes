@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.promcodes</groupId>
 	<artifactId>telegram-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>latest</version>
 	<name>telegram-api</name>
 	<description>Telegram API</description>
 	<properties>
