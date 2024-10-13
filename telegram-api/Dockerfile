@@ -11,6 +11,6 @@ FROM eclipse-temurin:21
 WORKDIR /app
 COPY --from=build /build/target/telegram-api-*.jar /app
 
-EXPOSE 8081
+EXPOSE 8082
 
-ENTRYPOINT ["java","-jar","telegram-api.jar"]
+ENTRYPOINT ["java","-jar","telegram-api-latest.jar"]
