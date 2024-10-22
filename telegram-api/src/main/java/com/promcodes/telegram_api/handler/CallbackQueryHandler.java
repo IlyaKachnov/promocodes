@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 public class CallbackQueryHandler {
 
     private final PromocodeService promocodeService;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
         final String chatId = buttonQuery.getMessage().getChatId().toString();
@@ -43,13 +47,14 @@ public class CallbackQueryHandler {
     }
 
     private String generateMessageText(PromoCodeEntity promoCodeEntity) {
-        return new StringBuilder()
-                .append("❤\uFE0F").append(promoCodeEntity.getCompanyName() == null ? "ПРОМОКОД" : promoCodeEntity.getCompanyName())
+        final var append = new StringBuilder()
+                .append("❤\uFE0F").append(promoCodeEntity.getCompanyName() == null ? "ПРОМОКОД" : "Промокод для:" + promoCodeEntity.getCompanyName())
                 .append("\n")
                 .append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
                 .append("\uD83D\uDC47\uD83C\uDFFD")
                 .append("Ссылка на сайт: ").append(promoCodeEntity.getUrl()).append("\n")
-                .append("Дата начала действия: ").append(promoCodeEntity.getPublishedDate())
+                .append("Дата начала действия: ").append(promoCodeEntity.getPublishedDate() == null ? "" : promoCodeEntity.getPublishedDate().format(formatter));
+        return append
                 .toString();
     }
 }

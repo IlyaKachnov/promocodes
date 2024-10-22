@@ -13,7 +13,7 @@ public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Lon
     @Query("select count(*) from promo_code where promo_code.execution_id = 2 group by category_id")
     int countAll();
 
-    List<PromoCodeEntity> findAllByCategoryOrderByExecutionIdDesc(String category);
+    List<PromoCodeEntity> findTop15ByCategoryOrderByExecutionIdDesc(String category);
 
     @Query("select * from promo_code where (promo_code.promo_code is not null and promo_code.execution_id in (:ids)) " +
             "order by execution_id desc limit :limit")

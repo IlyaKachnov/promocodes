@@ -16,7 +16,7 @@ public class PromocodeService {
 
 
     public List<PromoCodeEntity> getPromos(String category) {
-        return promoCodeRepository.findAllByCategoryOrderByExecutionIdDesc(category);
+        return promoCodeRepository.findTop15ByCategoryOrderByExecutionIdDesc(category);
     }
 
     public List<PromoCodeEntity> getLastNPromos(Integer limit) {

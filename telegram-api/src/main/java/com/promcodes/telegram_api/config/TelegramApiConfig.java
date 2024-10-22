@@ -5,12 +5,14 @@ import com.promcodes.telegram_api.handler.CallbackQueryHandler;
 import com.promcodes.telegram_api.handler.MessageHandler;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 
 @Configuration
 @Getter
+@EnableConfigurationProperties(value = ServiceProperties.class)
 public class TelegramApiConfig {
 
     @Value("${telegram.webhook-path}")
