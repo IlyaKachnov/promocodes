@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ import java.util.Set;
 public class YoutubeService implements ExecutionService {
     private static final Logger log = LoggerFactory.getLogger(YoutubeService.class);
     //todo move to config file
-    public static final long RESULTS = 2L;
+    public static final long RESULTS = 1L;
     private final YouTube youtubeApiService;
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;
@@ -48,41 +49,47 @@ public class YoutubeService implements ExecutionService {
     }
 
     private List<RawVideoDataEntity> getPromosByChannelId(String channelId, Long executionId) throws IOException {
-        log.info("Query youtube API for channel id = {}", channelId);
-        final ChannelListResponse channelListResponse = youtubeApiService.channels().list("snippet").setId(channelId)
-                .setPart("contentDetails")
-                .execute();
-        final String uploadsPlaylistId = channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
-        log.info("Getting data for channel id = {}, uploadsPlaylistId = {}", channelId, uploadsPlaylistId);
-        final PlaylistItemListResponse playlistItemListResponse = youtubeApiService.playlistItems()
-                .list("snippet")
-                .setPlaylistId(uploadsPlaylistId).setMaxResults(RESULTS).execute();
-        final List<PlaylistItem> items = playlistItemListResponse.getItems();
-        log.info("Getting items = {}, size = {}", items, items.size());
-        List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
-        for (PlaylistItem playlistItem : items) {
-            final PlaylistItemSnippet snippet = playlistItem.getSnippet();
-            final String description = snippet.getDescription();
-            log.debug("Description: {}", description);
-            RawVideoDataEntity rawVideoDataEntity = RawVideoDataEntity.builder()
-                    .description(description)
-                    .name(snippet.getTitle())
-                    .publishedDate(LocalDate.parse(snippet.getPublishedAt().toString(),
-                            DateTimeFormatter.ISO_DATE_TIME))
-                    .channelName(snippet.getChannelTitle())
-                    .channelId(channelId)
-                    .playListId(playlistItem.getId())
-                    .createdAt(LocalDateTime.now())
-                    .executionId(executionId)
-                    .build();
+        try {
+            log.info("Query youtube API for channel id = {}", channelId);
 
-            boolean match = needls.stream().anyMatch(description::contains);
-            if (match) {
-                rawVideoDataEntity.setPromoCode(description);
-                log.info("Promocode line = {}", description);
+            final ChannelListResponse channelListResponse = youtubeApiService.channels().list("snippet").setId(channelId)
+                    .setPart("contentDetails")
+                    .execute();
+            final String uploadsPlaylistId = channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
+            log.info("Getting data for channel id = {}, uploadsPlaylistId = {}", channelId, uploadsPlaylistId);
+            final PlaylistItemListResponse playlistItemListResponse = youtubeApiService.playlistItems()
+                    .list("snippet")
+                    .setPlaylistId(uploadsPlaylistId).setMaxResults(RESULTS).execute();
+            final List<PlaylistItem> items = playlistItemListResponse.getItems();
+            log.info("Getting items = {}, size = {}", items, items.size());
+            List<RawVideoDataEntity> promoCodeEntities = new ArrayList<>();
+            for (PlaylistItem playlistItem : items) {
+                final PlaylistItemSnippet snippet = playlistItem.getSnippet();
+                final String description = snippet.getDescription();
+                log.debug("Description: {}", description);
+                RawVideoDataEntity rawVideoDataEntity = RawVideoDataEntity.builder()
+                        .description(description)
+                        .name(snippet.getTitle())
+                        .publishedDate(LocalDate.parse(snippet.getPublishedAt().toString(),
+                                DateTimeFormatter.ISO_DATE_TIME))
+                        .channelName(snippet.getChannelTitle())
+                        .channelId(channelId)
+                        .playListId(playlistItem.getId())
+                        .createdAt(LocalDateTime.now())
+                        .executionId(executionId)
+                        .build();
+
+                boolean match = needls.stream().anyMatch(description::contains);
+                if (match) {
+                    rawVideoDataEntity.setPromoCode(description);
+                    log.info("Promocode line = {}", description);
+                }
+                promoCodeEntities.add(rawVideoDataEntity);
             }
-            promoCodeEntities.add(rawVideoDataEntity);
+            return promoCodeEntities;
+        } catch (RuntimeException e) {
+            log.error("Exception during getting video data for channelID = {}", channelId, e);
+            return Collections.emptyList();
         }
-        return promoCodeEntities;
     }
 }

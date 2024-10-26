@@ -1,10 +1,14 @@
 package com.promcodes.telegram_api.service;
 
-import com.promcodes.telegram_api.dao.*;
+import com.promcodes.telegram_api.dao.ExecutionRepository;
+import com.promcodes.telegram_api.dao.ExecutionStatus;
+import com.promcodes.telegram_api.dao.PromoCodeEntity;
+import com.promcodes.telegram_api.dao.PromoCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -16,14 +20,14 @@ public class PromocodeService {
 
 
     public List<PromoCodeEntity> getPromos(String category) {
-        return promoCodeRepository.findAllByCategoryOrderByExecutionIdDesc(category);
+        return promoCodeRepository.findTop15ByCategoryOrderByExecutionIdDesc(category);
     }
 
     public List<PromoCodeEntity> getLastNPromos(Integer limit) {
-        List<ExecutionEntity> executionEntityList = executionRepository.findAllByStatusIsOrderByIdDesc(ExecutionStatus.FINISHED);
-        List<Long> list = executionEntityList.stream().map(ExecutionEntity::getId).toList();
-        return promoCodeRepository.getLastPromos(list, limit);
+        final var executionEntity = executionRepository.findFirstByStatusIsOrderByIdDesc(ExecutionStatus.FINISHED);
+        if (executionEntity.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return promoCodeRepository.getNPromosByExecutionId(executionEntity.get().getId(), limit);
     }
-
-
 }

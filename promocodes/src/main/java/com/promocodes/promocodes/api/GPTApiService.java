@@ -7,7 +7,7 @@ import com.gptapi.request.RequestGpt;
 import com.gptapi.response.AccessTokenResponse;
 import com.gptapi.response.ResponseGpt;
 import com.promocodes.promocodes.dao.entity.AccessTokenEntity;
-import com.promocodes.promocodes.dao.entity.RawGptCompanyEntity;
+import com.promocodes.promocodes.dao.entity.GptMessage;
 import com.promocodes.promocodes.dao.repository.AccessTokenRepository;
 import com.promocodes.promocodes.dao.repository.RawGptCompanyRepository;
 import com.promocodes.promocodes.utils.FileReaderUtils;
@@ -41,11 +41,10 @@ public class GPTApiService {
 
     private final RawGptCompanyRepository rawGptCompanyRepository;
 
-    public ResponseEntity<ResponseGpt> callGpt(String promptFile, List<String> replaceStrings) throws JsonProcessingException {
+    public ResponseEntity<ResponseGpt> callGpt(String promptTextTemplate, List<String> replaceStrings) throws JsonProcessingException {
         AccessTokenEntity authToken = getAuthToken();
-        String readFromFile = fileReaderUtils.readFromFile(promptFile);
         log.info("Use params for prompt = {}", replaceStrings);
-        String companyPrompt = String.format(readFromFile, replaceStrings);
+        String companyPrompt = String.format(promptTextTemplate, replaceStrings);
         log.info("Create prompt  = {}", companyPrompt);
         RequestGpt requestGpt = new RequestGpt();
         requestGpt.setModel("GigaChat");
@@ -69,8 +68,9 @@ public class GPTApiService {
                 entity,
                 ResponseGpt.class);
         log.info("Got response = {}", responseGptResponseEntity.getBody());
-        rawGptCompanyRepository.save(RawGptCompanyEntity.builder()
+        rawGptCompanyRepository.save(GptMessage.builder()
                 .data(objectMapper.writeValueAsString(responseGptResponseEntity.getBody()))
+                .request(objectMapper.writeValueAsString(requestGpt))
                 .build());
         return responseGptResponseEntity;
     }

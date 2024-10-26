@@ -11,3 +11,9 @@ telegram:
   webhook-path: "https://get-promo.ru/"
   bot-name: "Promocode_App_Bot"
   bot-token: <bot_token>
+service:
+  buttons:
+    common: "Общие Промокоды"
+    electronics: "Электроника"
+    beauty: "Красота и здоровье"
+  pilot-mode: true

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,18 +44,19 @@ public class AddCompanyDataService implements ExecutionService {
                     for (CompanyEntity company : companies) {
                         if (company.getUrl() == null) {
                             log.info("Url for company = {} is null", company.getName());
+                            promoCodeEntity.setCategory(DEFAULT_VALUE);
                             continue;
                         }
                         String transformedCompanyUrl = transformUrl(company.getUrl().replace("www.", ""));
-                        log.info("Comparing value = {} with segment = {}", transformedCompanyUrl, segment);
+                        log.debug("Comparing value = {} with segment = {}", transformedCompanyUrl, segment);
                         if (segment.equals(transformedCompanyUrl)
                                 || segment.contains(transformedCompanyUrl)
                                 || transformedCompanyUrl.contains(segment)) {
-                            promoCodeEntity.setCompanyName(company.getName());
+                            promoCodeEntity.setCompanyName(companyIfNotExists(promoCodeEntity, company.getName()));
                             promoCodeEntity.setCategory(categoryMap.getOrDefault(company.getCategoryId(), DEFAULT_VALUE));
                             break;
                         }
-                        promoCodeEntity.setCompanyName(segment);
+                        promoCodeEntity.setCompanyName(companyIfNotExists(promoCodeEntity, segment));
                         promoCodeEntity.setCategory(DEFAULT_VALUE);
                     }
                 }
@@ -90,8 +90,9 @@ public class AddCompanyDataService implements ExecutionService {
         }
     }
 
-//    private String splitByDot(String url) {
-//        String[] segments = url.split("\\.");
-//        return
-//    }
+
+    private String companyIfNotExists(PromoCodeEntity promoCodeEntity, String defaultValue) {
+        return Objects.isNull(promoCodeEntity.getCompanyName()) ? defaultValue : promoCodeEntity.getCompanyName();
+    }
+
 }
