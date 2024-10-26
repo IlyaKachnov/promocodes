@@ -28,8 +28,8 @@ public class CallbackQueryHandler {
         final String chatId = buttonQuery.getMessage().getChatId().toString();
         String data = buttonQuery.getData();
         log.info("Call button with data = {}", data);
-        if (data.equals("Последние 15")) {
-            return generateMessage(generateSendMessage(promocodeService.getLastNPromos(15)), chatId);
+        if (data.equals("Последние")) {
+            return generateMessage(generateSendMessage(promocodeService.getLastNPromos(100)), chatId);
         }
 
         return generateMessage(generateSendMessage(promocodeService.getPromos(data)), chatId);
