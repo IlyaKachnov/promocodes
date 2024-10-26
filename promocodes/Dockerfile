@@ -6,11 +6,13 @@ COPY pom.xml .
 USER root
 COPY russian_trusted_root_ca_pem.crt $JAVA_HOME/openjdk/lib/security
 COPY russian_trusted_sub_ca_pem.crt $JAVA_HOME/openjdk/lib/security
+COPY ngw.devices.sberbank.ru.crt $JAVA_HOME/openjdk/lib/security
 
 RUN \
   cd $JAVA_HOME/openjdk/lib/security \
   && keytool -importcert -file russian_trusted_root_ca_pem.crt -alias root_cert -cacerts -storepass changeit -noprompt \
   && keytool -importcert -file russian_trusted_sub_ca_pem.crt -alias sub_cert -cacerts -storepass changeit -noprompt \
+  && keytool -importcert -file ngw.devices.sberbank.ru.crt -alias devices_cert -cacerts -storepass changeit -noprompt
 
 RUN mvn dependency:go-offline
 COPY src ./src
