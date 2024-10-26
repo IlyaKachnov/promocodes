@@ -17,3 +17,8 @@ service:
     electronics: "Электроника"
     beauty: "Красота и здоровье"
   pilot-mode: true
+logging:
+  level:
+    root: info
+  file:
+    path: logs
