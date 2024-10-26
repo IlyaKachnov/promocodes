@@ -14,7 +14,9 @@ public class ParseDataEvent {
 
     public enum EventStatus {
         PARSE_RAW_DATA(0),
-        GETTING_PROMOS(1),
+        //todo менять через конфиг
+//        GETTING_PROMOS(1),
+        GETTING_PROMOS_V2(1),
         FILL_COMPANY_NAMES(2);
 
         private final int order;

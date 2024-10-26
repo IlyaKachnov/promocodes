@@ -37,13 +37,8 @@ public class PromocodeMappingService implements ExecutionService {
     private final CompanyService companyService;
 
     public void execute(Long executionId) {
-        //todo hardcode execId
         List<RawVideoDataEntity> rawVideoDataEntities = rawVideoDataRepository.findAllByPromoCodeIsNotNullAndExecutionId(executionId).stream()
                 .toList();
-//        List<String> companyNames = ((List<CompanyEntity>) companyRepository.findAll()).stream()
-//                .map(CompanyEntity::getName)
-//                .toList();
-
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
         for (RawVideoDataEntity rawVideoDataEntity : rawVideoDataEntities) {
             if (rawVideoDataEntity.getPromoCode() != null) {
