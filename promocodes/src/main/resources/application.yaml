@@ -15,7 +15,7 @@ service:
     key: <youtube_api_key>
 logging:
   level:
-    root: debug
+    root: info
   file:
     path: logs
 gpt:
