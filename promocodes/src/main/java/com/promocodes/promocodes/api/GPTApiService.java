@@ -42,6 +42,7 @@ public class GPTApiService {
     public ResponseEntity<ResponseGpt> callGpt(String promptTextTemplate, List<String> replaceStrings) throws JsonProcessingException {
         AccessTokenEntity authToken = getAuthToken();
         log.info("Use params for prompt = {}", replaceStrings);
+        log.info("Prompt template text: {}", promptTextTemplate);
         String companyPrompt = String.format(promptTextTemplate, replaceStrings);
         log.info("Create prompt  = {}", companyPrompt);
         RequestGpt requestGpt = new RequestGpt();
