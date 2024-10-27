@@ -10,7 +10,6 @@ import com.promocodes.promocodes.dao.entity.AccessTokenEntity;
 import com.promocodes.promocodes.dao.entity.GptMessage;
 import com.promocodes.promocodes.dao.repository.AccessTokenRepository;
 import com.promocodes.promocodes.dao.repository.RawGptCompanyRepository;
-import com.promocodes.promocodes.utils.FileReaderUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,6 @@ public class GPTApiService {
     private String token;
     private final RestTemplate restTemplate;
     public final AccessTokenRepository accessTokenRepository;
-    private final FileReaderUtils fileReaderUtils;
     private final ObjectMapper objectMapper;
 
     private final RawGptCompanyRepository rawGptCompanyRepository;
@@ -44,6 +42,7 @@ public class GPTApiService {
     public ResponseEntity<ResponseGpt> callGpt(String promptTextTemplate, List<String> replaceStrings) throws JsonProcessingException {
         AccessTokenEntity authToken = getAuthToken();
         log.info("Use params for prompt = {}", replaceStrings);
+        log.info("Prompt template text: {}", promptTextTemplate);
         String companyPrompt = String.format(promptTextTemplate, replaceStrings);
         log.info("Create prompt  = {}", companyPrompt);
         RequestGpt requestGpt = new RequestGpt();
@@ -87,6 +86,9 @@ public class GPTApiService {
                     headers.add("Content-Type", "application/x-www-form-urlencoded");
                     headers.add("RqUID", UUID.randomUUID().toString());
                     headers.setBearerAuth(token);
+
+                    log.debug("Headers = {}", headers);
+                    log.debug("Token = {}", token);
                     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
                     ResponseEntity<AccessTokenResponse> accessTokenResponseResponseEntity = restTemplate.postForEntity("https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
                             entity,

@@ -34,7 +34,7 @@ public class PromocodeMappingServiceV2 implements ExecutionService {
     @Override
     public void execute(Long executionId) throws Exception {
 
-        final var getPromoPrompt = fileReaderUtils.readFromFile("get_promo_prompt");
+        final var getPromoPrompt = fileReaderUtils.getResource("get_promo_prompt");
         final var entityList = rawVideoDataRepository.findAllByPromoCodeIsNotNullAndExecutionId(executionId);
 
         List<PromoCodeEntity> promoCodeEntities = new ArrayList<>();
