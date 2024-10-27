@@ -10,7 +10,6 @@ import com.promocodes.promocodes.dao.entity.AccessTokenEntity;
 import com.promocodes.promocodes.dao.entity.GptMessage;
 import com.promocodes.promocodes.dao.repository.AccessTokenRepository;
 import com.promocodes.promocodes.dao.repository.RawGptCompanyRepository;
-import com.promocodes.promocodes.utils.FileReaderUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
