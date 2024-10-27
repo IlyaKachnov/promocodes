@@ -10,8 +10,8 @@ import com.promocodes.promocodes.dao.entity.YoutubeChannelEntity;
 import com.promocodes.promocodes.dao.repository.RawVideoDataRepository;
 import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,10 +25,11 @@ import java.util.Set;
 
 @Service("PARSE_RAW_DATA")
 @RequiredArgsConstructor
+@Slf4j
 public class YoutubeService implements ExecutionService {
-    private static final Logger log = LoggerFactory.getLogger(YoutubeService.class);
-    //todo move to config file
-    public static final long RESULTS = 1L;
+
+    @Value("${service.processing.number-of-videos}")
+    public long RESULTS;
     private final YouTube youtubeApiService;
     private final RawVideoDataRepository rawVideoDataRepository;
     private final YoutubeChannelRepository youtubeChannelRepository;
@@ -51,7 +52,6 @@ public class YoutubeService implements ExecutionService {
     private List<RawVideoDataEntity> getPromosByChannelId(String channelId, Long executionId) throws IOException {
         try {
             log.info("Query youtube API for channel id = {}", channelId);
-
             final ChannelListResponse channelListResponse = youtubeApiService.channels().list("snippet").setId(channelId)
                     .setPart("contentDetails")
                     .execute();

@@ -13,6 +13,8 @@ service:
     cron: "0 0 4 * * ?"
   youtube:
     key: <youtube_api_key>
+  processing:
+    number-of-videos: 3
 logging:
   level:
     root: info
