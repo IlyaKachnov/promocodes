@@ -10,9 +10,12 @@ spring:
     change-log: classpath:liquibase/changelog.xml
 service:
   scheduler:
-    cron: "0 0 4 * * ?"
+#    cron: "0 0 4 * * ?"
+    cron: "-"
   youtube:
     key: <youtube_api_key>
+  processing:
+    number-of-videos: 3
 logging:
   level:
     root: info
