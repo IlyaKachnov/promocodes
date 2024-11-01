@@ -7,9 +7,11 @@ import com.promocodes.promocodes.facade.StartParsingFacade;
 import com.promocodes.promocodes.service.CompanyService;
 import com.promocodes.promocodes.service.execution.AddCompanyDataService;
 import com.promocodes.promocodes.service.execution.PromocodeMappingService;
+import com.promocodes.promocodes.service.execution.PromocodeMappingServiceV3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,8 +24,9 @@ import java.util.List;
 public class ParserController {
     private final CompanyService companyService;
     private final PromocodeMappingService promocodeMappingService;
-    private final GPTApiService gptApiService;
     private final StartParsingFacade startParsingFacade;
+
+    private final PromocodeMappingServiceV3 promocodeMappingServiceV3;
 
     private final AddCompanyDataService addCompanyDataService;
 
@@ -55,5 +58,11 @@ public class ParserController {
     @GetMapping("/fill-company-category")
     public ResponseEntity<List<CompanyEntity>> fillCompanyCategory() throws JsonProcessingException {
         return ResponseEntity.ok(companyService.fillCompanyWithCategory());
+    }
+
+    @GetMapping("/get-promos-v3/{execId}")
+    public ResponseEntity<String> getPromosV3(@PathVariable Long execId) throws Exception {
+        promocodeMappingServiceV3.execute(execId);
+        return ResponseEntity.ok("OK");
     }
 }

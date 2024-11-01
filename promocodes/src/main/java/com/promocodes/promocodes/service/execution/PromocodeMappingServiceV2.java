@@ -79,9 +79,9 @@ public class PromocodeMappingServiceV2 implements ExecutionService {
                     log.error("Exception during creating promo code", e);
                 }
             }
-            promoCodeRepository.saveAll(promoCodeEntities);
-        }
 
+        }
+        promoCodeRepository.saveAll(promoCodeEntities);
     }
 
     public String modifyDescription(String description) {

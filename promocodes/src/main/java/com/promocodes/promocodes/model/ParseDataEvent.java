@@ -17,7 +17,8 @@ public class ParseDataEvent {
         //todo менять через конфиг
 //        GETTING_PROMOS(1),
         GETTING_PROMOS_V2(1),
-        FILL_COMPANY_NAMES(2);
+        GETTING_PROMOS_V3(2),
+        FILL_COMPANY_NAMES(3);
 
         private final int order;
 
