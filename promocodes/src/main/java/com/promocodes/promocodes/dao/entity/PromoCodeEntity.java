@@ -38,6 +38,9 @@ public class PromoCodeEntity {
     @Column("execution_id")
     private Long executionId;
 
+    @Column("category_id")
+    private Long categoryId;
+
     @Column("published_date")
     private LocalDate publishedDate;
 

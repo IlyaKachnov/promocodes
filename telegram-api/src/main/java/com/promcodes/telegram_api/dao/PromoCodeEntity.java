@@ -38,6 +38,9 @@ public class PromoCodeEntity {
     @Column("execution_id")
     private Long executionId;
 
+    @Column("category_id")
+    private Long categoryId;
+
     @Column("published_date")
     private LocalDate publishedDate;
 
@@ -57,12 +60,12 @@ public class PromoCodeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PromoCodeEntity that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(description, that.description) && Objects.equals(companyName, that.companyName) && Objects.equals(promoCode, that.promoCode) && Objects.equals(url, that.url) && Objects.equals(category, that.category) && Objects.equals(executionId, that.executionId) && Objects.equals(publishedDate, that.publishedDate) && Objects.equals(expiresAt, that.expiresAt) && Objects.equals(promoCodeValue, that.promoCodeValue) && Objects.equals(algVersion, that.algVersion) && Objects.equals(gptMessage, that.gptMessage);
+        return Objects.equals(id, that.id) && Objects.equals(description, that.description) && Objects.equals(companyName, that.companyName) && Objects.equals(promoCode, that.promoCode) && Objects.equals(url, that.url) && Objects.equals(category, that.category) && Objects.equals(createdAt, that.createdAt) && Objects.equals(executionId, that.executionId) && Objects.equals(categoryId, that.categoryId) && Objects.equals(publishedDate, that.publishedDate) && Objects.equals(expiresAt, that.expiresAt) && Objects.equals(promoCodeValue, that.promoCodeValue) && Objects.equals(algVersion, that.algVersion) && Objects.equals(gptMessage, that.gptMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, companyName, promoCode, url, category, executionId, publishedDate, expiresAt, promoCodeValue, algVersion, gptMessage);
+        return Objects.hash(id, description, companyName, promoCode, url, category, createdAt, executionId, categoryId, publishedDate, expiresAt, promoCodeValue, algVersion, gptMessage);
     }
 
     @Override
@@ -76,6 +79,7 @@ public class PromoCodeEntity {
                 ", category='" + category + '\'' +
                 ", createdAt=" + createdAt +
                 ", executionId=" + executionId +
+                ", categoryId=" + categoryId +
                 ", publishedDate=" + publishedDate +
                 ", expiresAt='" + expiresAt + '\'' +
                 ", promoCodeValue='" + promoCodeValue + '\'' +

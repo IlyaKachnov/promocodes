@@ -10,12 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends CrudRepository<CompanyEntity, Long> {
-    @Query("select * from company limit :limit offset :offset")
-    List<CompanyEntity> getOffsetN(@Param("limit") Integer limit, @Param("offset") Integer offset);
-
-    @Modifying
-    @Query("update company set url =:url where name = :name")
-    Optional<CompanyEntity> updateCompany(@Param("url") String url, @Param("name") String name);
 
     List<CompanyEntity> findAllByCategoryIdIsNull();
+
+    Optional<CompanyEntity> findByName(String name);
+
+    @Query("select c.* from company as c where lower(c.url) like lower(concat('%', :likeUrl, '%')) limit 1")
+    Optional<CompanyEntity> getLikeUrl(@Param("likeUrl") String likeUrl);
+
+
+    Optional<CompanyEntity> findByUrlIsLikeIgnoreCase(@Param("url") String url);
+
 }
