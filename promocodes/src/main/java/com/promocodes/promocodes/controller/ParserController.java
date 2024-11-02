@@ -1,7 +1,6 @@
 package com.promocodes.promocodes.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.promocodes.promocodes.api.GPTApiService;
 import com.promocodes.promocodes.dao.entity.CompanyEntity;
 import com.promocodes.promocodes.facade.StartParsingFacade;
 import com.promocodes.promocodes.service.CompanyService;
@@ -65,4 +64,11 @@ public class ParserController {
         promocodeMappingServiceV3.execute(execId);
         return ResponseEntity.ok("OK");
     }
+
+    @GetMapping("/add_company/{execId}")
+    public ResponseEntity<String> addCompany(@PathVariable Long execId) throws Exception {
+        addCompanyDataService.execute(execId);
+        return ResponseEntity.ok("OK");
+    }
 }
+
