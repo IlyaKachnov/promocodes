@@ -4,10 +4,12 @@ import com.promcodes.telegram_api.service.PromocodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -18,6 +20,7 @@ public class MessageHandler {
     private final ButtonParameters buttonParameters;
     private final ConcurrentHashMap<String, String> chatMode;
     private final PromocodeService promocodeService;
+    private final MessageContentBuilder messageContentBuilder;
 
     public BotApiMethod<?> answerMessage(Message message) {
         String chatId = message.getChatId().toString();
@@ -41,9 +44,12 @@ public class MessageHandler {
                 return new SendMessage(chatId, "No hanlder defined");
             }
             case ("SEARCH") -> {
-                var promoCodeEntities = promocodeService.searchByCompany(inputText);
                 chatMode.put(chatId, ChatMode.INPUT.toString());
-                return new SendMessage(chatId, "Mock found");
+                var promoCodeEntities = promocodeService.searchByCompany(inputText);
+                if (CollectionUtils.isEmpty(promoCodeEntities)) {
+                    return new SendMessage(chatId, "No data found");
+                }
+                return generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
             }
             default -> {
                 log.error("No mode found for chatID = {}", chatId);
@@ -51,5 +57,11 @@ public class MessageHandler {
                 throw new IllegalArgumentException();
             }
         }
+    }
+
+    private SendMessage generateMessage(String message, String chatId) {
+        SendMessage sendMessage = new SendMessage(chatId, message);
+        sendMessage.setDisableWebPagePreview(true);
+        return sendMessage;
     }
 }

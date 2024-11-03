@@ -34,9 +34,7 @@ public class CallbackQueryHandler {
                 chatMode.put(chatId, ChatMode.SEARCH.toString());
                 return generateMessage("Промокод какой компании хотите найти?", chatId);
             }
-            default -> {
-                log.error("No handler for button found = {}, chatId= {}", buttonQuery.getData(), chatId);
-            }
+            default -> log.error("No handler for button found = {}, chatId= {}", buttonQuery.getData(), chatId);
         }
         return generateMessage("No handler for button found", chatId);
     }

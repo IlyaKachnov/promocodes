@@ -59,7 +59,7 @@ public class MessageContentBuilder {
         } catch (RuntimeException e) {
             log.error("Exception during generating promo text", e);
         }
-        return "";
+        return "No data found";
     }
 
     private String resolveDate(PromoCodeEntity promoCodeEntity) {
