@@ -33,10 +33,11 @@ public class MessageContentBuilder {
                 return new StringBuilder()
                         .append("❤\uFE0F").append(promoCodeEntity.getCompanyName() == null ? "ПРОМОКОД" : "Промокод для: " + promoCodeEntity.getCompanyName())
                         .append("\n")
-                        .append("\uD83C\uDF1F").append(promoCodeEntity.getPromoCode()).append("\n")
+                        .append("\uD83C\uDF1F").append(promoCodeEntity.getShortDescription()).append("\n")
                         .append("\uD83D\uDC47\uD83C\uDFFD")
                         .append("Ссылка на сайт: ").append(promoCodeEntity.getUrl()).append("\n")
                         .append("Дата начала действия: ").append(getStartDate(promoCodeEntity.getPublishedDate())).append("\n")
+                        .append("✔\uFE0F")
                         .append("Действует до: ").append(resolveDate(promoCodeEntity))
                         .toString();
             }
@@ -52,6 +53,7 @@ public class MessageContentBuilder {
                         .append("Ссылка на сайт: ").append(promoCodeEntity.getUrl()).append("\n")
                         .append("✔\uFE0F")
                         .append("Дата начала действия: ").append(getStartDate(promoCodeEntity.getPublishedDate())).append("\n")
+                        .append("✔\uFE0F")
                         .append("Действует до: ").append(resolveDate(promoCodeEntity))
                         .toString();
 

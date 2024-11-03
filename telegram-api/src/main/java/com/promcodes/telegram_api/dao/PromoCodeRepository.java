@@ -15,4 +15,9 @@ public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Lon
 
     @Query("select p.* from promo_code as p where lower(p.company_name) like lower(concat('%', :companyName, '%'))")
     List<PromoCodeEntity> getPromosByCompanyName(String companyName);
+
+    @Query("select p.* from promo_code as p " +
+            "WHERE to_tsvector(company_name) @@ plainto_tsquery(:companyName) " +
+            "ORDER BY ts_rank(to_tsvector(company_name), plainto_tsquery(:companyName)) DESC")
+    List<PromoCodeEntity> getPromosByCompanyNameV2(String companyName);
 }

@@ -34,6 +34,6 @@ public class PromocodeService {
 
     public List<PromoCodeEntity> searchByCompany(String company) {
         var searchString = company.trim().toLowerCase(Locale.ROOT);
-        return promoCodeRepository.getPromosByCompanyName(searchString);
+        return promoCodeRepository.getPromosByCompanyNameV2(searchString);
     }
 }
