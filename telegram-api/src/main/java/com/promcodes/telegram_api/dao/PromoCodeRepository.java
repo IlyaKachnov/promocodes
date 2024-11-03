@@ -7,19 +7,12 @@ import java.util.List;
 
 public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Long> {
 
-    @Query("select * from promo_code where promo_code.promo_code is not null order by promo_code.execution_id desc limit :limit ")
-    List<PromoCodeEntity> getActualPromos(Integer limit);
-
-    @Query("select count(*) from promo_code where promo_code.execution_id = 2 group by category_id")
-    int countAll();
-
     List<PromoCodeEntity> findTop15ByCategoryOrderByExecutionIdDesc(String category);
-
-    @Query("select * from promo_code where (promo_code.promo_code is not null and promo_code.execution_id in (:ids)) " +
-            "order by execution_id desc limit :limit")
-    List<PromoCodeEntity> getLastPromos(List<Long> ids, Integer limit);
 
     @Query("select * from promo_code where (promo_code.execution_id = :executionId) " +
             " limit :limit")
     List<PromoCodeEntity> getNPromosByExecutionId(Long executionId, Integer limit);
+
+    @Query("select p.* from promo_code as p where lower(p.company_name) like lower(concat('%', :companyName, '%'))")
+    List<PromoCodeEntity> getPromosByCompanyName(String companyName);
 }

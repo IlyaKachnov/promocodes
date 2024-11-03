@@ -32,6 +32,9 @@ public class PromoCodeEntity {
     @Column("category")
     private String category;
 
+    @Column("short_description")
+    private String shortDescription;
+
     @Column("created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
