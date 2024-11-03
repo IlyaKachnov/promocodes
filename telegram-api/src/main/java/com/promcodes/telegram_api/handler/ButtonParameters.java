@@ -36,6 +36,12 @@ public class ButtonParameters {
             inlineKeyboardButton.setText("Последние");
             inlineKeyboardButton.setCallbackData("Последние");
             buttons.add(inlineKeyboardButton);
+
+            var searchButton = new InlineKeyboardButton();
+            searchButton.setText("Поиск по компаниям");
+            searchButton.setCallbackData("search");
+            buttons.add(searchButton);
+
             inlineKeyboardMarkup = new InlineKeyboardMarkup();
             inlineKeyboardMarkup.setKeyboard(List.of(buttons));
             return;

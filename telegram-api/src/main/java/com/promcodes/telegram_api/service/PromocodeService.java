@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +30,10 @@ public class PromocodeService {
             return Collections.emptyList();
         }
         return promoCodeRepository.getNPromosByExecutionId(executionEntity.get().getId(), limit);
+    }
+
+    public List<PromoCodeEntity> searchByCompany(String company) {
+        var searchString = company.trim().toLowerCase(Locale.ROOT);
+        return promoCodeRepository.getPromosByCompanyNameV2(searchString);
     }
 }

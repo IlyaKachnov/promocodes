@@ -60,6 +60,7 @@ public class PromocodeMappingServiceV2 implements ExecutionService {
                                 .executionId(executionId)
                                 .publishedDate(rawVideoDataEntity.getPublishedDate())
                                 .gptMessage(message.getContent())
+                                .shortDescription(truncateToMaxLength(promocodeGptDto.getShortDescription()))
                                 .build();
                         promoCodeEntities.add(promoEntity);
                     } catch (JsonProcessingException e) {
@@ -87,5 +88,12 @@ public class PromocodeMappingServiceV2 implements ExecutionService {
     public String modifyDescription(String description) {
         String str = description.replace("\n\n", "\n");
         return str.length() <= 300 ? str : str.substring(0, 300);
+    }
+
+    public String truncateToMaxLength(String description) {
+        if (description.length() < 1024) {
+            return description;
+        }
+        return description.substring(0, 1023);
     }
 }

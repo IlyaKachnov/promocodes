@@ -8,4 +8,5 @@ public class PromocodeGptDto {
     private String expiresAt;
     private String company;
     private String site;
+    private String shortDescription;
 }

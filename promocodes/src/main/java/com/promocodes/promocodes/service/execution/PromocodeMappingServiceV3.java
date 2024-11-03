@@ -21,7 +21,7 @@ public class PromocodeMappingServiceV3 implements ExecutionService {
         final List<PromoCodeEntity> promoCodeEntities = promoCodeRepository.findAllByExecutionIdAndPromoCodeValueIsNull(executionId);
         for (var promoCodeEntity : promoCodeEntities) {
             final PromoCodeEntity createdPromo = YoutubeDataUtils.createPromoEntity(promoCodeEntity.getDescription(), needles);
-            promoCodeEntity.setPromoCode(createdPromo.getPromoCode());
+            promoCodeEntity.setShortDescription(createdPromo.getShortDescription());
             promoCodeEntity.setUrl(createdPromo.getUrl());
             promoCodeEntity.setAlgVersion("v1");
         }

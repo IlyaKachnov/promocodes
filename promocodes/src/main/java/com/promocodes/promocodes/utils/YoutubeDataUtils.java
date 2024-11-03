@@ -32,7 +32,7 @@ public class YoutubeDataUtils {
         String promoUrl = findPromoUrl(paragraphs, promoParagraph);
 
         return PromoCodeEntity.builder()
-                .promoCode(promoParagraph.getText())
+                .shortDescription(promoParagraph.getText())
                 .description(str)
                 .url(promoUrl)
                 .createdAt(LocalDateTime.now())

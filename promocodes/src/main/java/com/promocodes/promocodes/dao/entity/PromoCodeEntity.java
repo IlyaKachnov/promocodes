@@ -23,14 +23,14 @@ public class PromoCodeEntity {
     @Column("company_name")
     private String companyName;
 
-    @Column("promo_code")
-    private String promoCode;
-
     @Column("url")
     private String url;
 
     @Column("category")
     private String category;
+
+    @Column("short_description")
+    private String shortDescription;
 
     @Column("created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -56,16 +56,17 @@ public class PromoCodeEntity {
     @Column("gpt_message")
     private String gptMessage;
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PromoCodeEntity that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(description, that.description) && Objects.equals(companyName, that.companyName) && Objects.equals(promoCode, that.promoCode) && Objects.equals(url, that.url) && Objects.equals(category, that.category) && Objects.equals(executionId, that.executionId) && Objects.equals(publishedDate, that.publishedDate) && Objects.equals(expiresAt, that.expiresAt) && Objects.equals(promoCodeValue, that.promoCodeValue) && Objects.equals(algVersion, that.algVersion) && Objects.equals(gptMessage, that.gptMessage);
+        return Objects.equals(id, that.id) && Objects.equals(description, that.description) && Objects.equals(companyName, that.companyName) && Objects.equals(url, that.url) && Objects.equals(category, that.category) && Objects.equals(shortDescription, that.shortDescription) && Objects.equals(createdAt, that.createdAt) && Objects.equals(executionId, that.executionId) && Objects.equals(categoryId, that.categoryId) && Objects.equals(publishedDate, that.publishedDate) && Objects.equals(expiresAt, that.expiresAt) && Objects.equals(promoCodeValue, that.promoCodeValue) && Objects.equals(algVersion, that.algVersion) && Objects.equals(gptMessage, that.gptMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, companyName, promoCode, url, category, executionId, publishedDate, expiresAt, promoCodeValue, algVersion, gptMessage);
+        return Objects.hash(id, description, companyName, url, category, shortDescription, createdAt, executionId, categoryId, publishedDate, expiresAt, promoCodeValue, algVersion, gptMessage);
     }
 
     @Override
@@ -74,11 +75,12 @@ public class PromoCodeEntity {
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", companyName='" + companyName + '\'' +
-                ", promoCode='" + promoCode + '\'' +
                 ", url='" + url + '\'' +
                 ", category='" + category + '\'' +
+                ", shortDescription='" + shortDescription + '\'' +
                 ", createdAt=" + createdAt +
                 ", executionId=" + executionId +
+                ", categoryId=" + categoryId +
                 ", publishedDate=" + publishedDate +
                 ", expiresAt='" + expiresAt + '\'' +
                 ", promoCodeValue='" + promoCodeValue + '\'' +
