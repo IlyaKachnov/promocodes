@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -47,9 +46,13 @@ public class MessageHandler {
                 chatMode.put(chatId, ChatMode.INPUT.toString());
                 var promoCodeEntities = promocodeService.searchByCompany(inputText);
                 if (CollectionUtils.isEmpty(promoCodeEntities)) {
-                    return new SendMessage(chatId, "No data found");
+                    var sendMessage = new SendMessage(chatId, "По вашему запросу ничего не найдено");
+                    sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                    return sendMessage;
                 }
-                return generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
+                var sendMessage = generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
+                sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                return sendMessage;
             }
             default -> {
                 log.error("No mode found for chatID = {}", chatId);

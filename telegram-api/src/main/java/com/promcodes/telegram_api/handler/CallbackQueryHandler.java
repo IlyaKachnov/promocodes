@@ -19,6 +19,7 @@ public class CallbackQueryHandler {
 
     private final ConcurrentHashMap<String, String> chatMode;
     private final MessageContentBuilder messageContentBuilder;
+    private final ButtonParameters buttonParameters;
 
 
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
@@ -28,7 +29,9 @@ public class CallbackQueryHandler {
         switch (data) {
             case ("Последние") -> {
                 chatMode.put(chatId, ChatMode.INPUT.toString());
-                return generateMessage(messageContentBuilder.build(promocodeService.getLastNPromos(10)), chatId);
+                var sendMessage = generateMessage(messageContentBuilder.build(promocodeService.getLastNPromos(10)), chatId);
+                sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                return sendMessage;
             }
             case ("search") -> {
                 chatMode.put(chatId, ChatMode.SEARCH.toString());
