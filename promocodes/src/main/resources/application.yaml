@@ -15,7 +15,7 @@ service:
   youtube:
     key: <youtube_api_key>
   processing:
-    number-of-videos: 3
+    number-of-videos: 2
 logging:
   level:
     root: info

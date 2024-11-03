@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.promocodes.promocodes.dao.entity.CompanyEntity;
 import com.promocodes.promocodes.facade.StartParsingFacade;
 import com.promocodes.promocodes.service.CompanyService;
+import com.promocodes.promocodes.service.YoutubeChannelService;
 import com.promocodes.promocodes.service.execution.AddCompanyDataService;
 import com.promocodes.promocodes.service.execution.PromocodeMappingService;
 import com.promocodes.promocodes.service.execution.PromocodeMappingServiceV3;
@@ -28,6 +29,8 @@ public class ParserController {
     private final PromocodeMappingServiceV3 promocodeMappingServiceV3;
 
     private final AddCompanyDataService addCompanyDataService;
+
+    private final YoutubeChannelService youtubeChannelService;
 
     @GetMapping
     public String getPage() throws IOException {
@@ -68,6 +71,12 @@ public class ParserController {
     @GetMapping("/add_company/{execId}")
     public ResponseEntity<String> addCompany(@PathVariable Long execId) throws Exception {
         addCompanyDataService.execute(execId);
+        return ResponseEntity.ok("OK");
+    }
+
+    @GetMapping("/channels")
+    public ResponseEntity<String> channels() throws Exception {
+        youtubeChannelService.getChannels();
         return ResponseEntity.ok("OK");
     }
 }
