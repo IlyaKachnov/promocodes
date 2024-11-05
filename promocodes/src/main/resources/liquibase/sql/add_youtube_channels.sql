@@ -1,0 +1,10 @@
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@cosmosprosto', 'UCEBfCZwWKn4JzCKojL75B-Q');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@SciOne', 'UCSaVoRErW4kqKsDqExs2MXA');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@varlamov', 'UC101o-vQ2iOj9vr00JUlyKw');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@redactsiya', 'UC1eFXmJNkjITxPFWTy6RsWg');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@hochudomoj', 'UCSYSmbd7f5lok9zkljB9X4A');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@RedRoomLIMB', 'UCsK1oV0PGkcZ1UhFtajx0dg');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@kuplinovplay', 'UCdKuE7a2QZeHPhDntXVZ91w');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@orlov_skvz', 'UCpFTWZY9jyTdcpu7zpXGA_A');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@Vladimir_Loginov', 'UCacaQDOlIvZWqXIb65cU-pA');
+INSERT INTO public.youtube_channel (name, channel_id) VALUES ('@EASTERCAKE1', 'UC4YM-PGOKORUeSCbOjBjR3w');

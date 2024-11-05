@@ -35,7 +35,13 @@ public class CallbackQueryHandler {
             }
             case ("search") -> {
                 chatMode.put(chatId, ChatMode.SEARCH.toString());
-                return generateMessage("Промокод какой компании хотите найти?", chatId);
+                return generateMessage("Введите имя компании", chatId);
+            }
+            case ("close-search") -> {
+                chatMode.put(chatId, ChatMode.INPUT.toString());
+                var sendMessage = generateMessage("Выбери одну из опций:", chatId);
+                sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                return sendMessage;
             }
             default -> log.error("No handler for button found = {}, chatId= {}", buttonQuery.getData(), chatId);
         }

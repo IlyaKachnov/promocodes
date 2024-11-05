@@ -7,5 +7,6 @@
     <include file="classpath:liquibase/sql/promocode_mapping_v2.sql"/>
     <include file="classpath:liquibase/sql/add_foreign_key.sql"/>
     <include file="classpath:liquibase/sql/add_short_desc.sql"/>
+    <include file="classpath:liquibase/sql/add_youtube_channels.sql"/>
 
 </databaseChangeLog>

@@ -12,7 +12,6 @@ import com.promocodes.promocodes.dao.repository.YoutubeChannelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -82,6 +81,13 @@ public class YoutubeService implements ExecutionService {
             log.warn("Video with id is already in use = {}", playlistItem.getId());
             return;
         }
+
+        var exists = rawVideoDataRepository.existsByPlayListId(playlistItem.getId());
+        if (exists) {
+            log.warn("Video with id is already exists = {}", playlistItem.getId());
+            return;
+        }
+
         final PlaylistItemSnippet snippet = playlistItem.getSnippet();
         final String description = snippet.getDescription();
         log.debug("Description: {}", description);
