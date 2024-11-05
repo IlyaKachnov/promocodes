@@ -9,4 +9,6 @@ public interface RawVideoDataRepository extends CrudRepository<RawVideoDataEntit
     List<RawVideoDataEntity> findAllByPromoCodeIsNotNullAndExecutionId(Long executionId);
 
     List<RawVideoDataEntity> findAllByExecutionId(Long executionId);
+
+    boolean existsByPlayListId(String videoId);
 }

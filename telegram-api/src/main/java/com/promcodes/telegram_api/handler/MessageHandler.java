@@ -8,7 +8,11 @@ import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -37,21 +41,21 @@ public class MessageHandler {
             chatMode.put(chatId, ChatMode.INPUT.toString());
             return sendMessage;
         }
+
         switch (chatModeValue) {
             case ("INPUT") -> {
                 log.info("Use INPUT mode for chatID = {}", chatId);
-                return new SendMessage(chatId, "No hanlder defined");
+                return new SendMessage(chatId, "Команда не найдена");
             }
             case ("SEARCH") -> {
-                chatMode.put(chatId, ChatMode.INPUT.toString());
                 var promoCodeEntities = promocodeService.searchByCompany(inputText);
                 if (CollectionUtils.isEmpty(promoCodeEntities)) {
                     var sendMessage = new SendMessage(chatId, "По вашему запросу ничего не найдено");
-                    sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                    sendMessage.setReplyMarkup(buttonParameters.getCloseSearchInlineKeyboardMarkup());
                     return sendMessage;
                 }
                 var sendMessage = generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
-                sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
+                sendMessage.setReplyMarkup(buttonParameters.getCloseSearchInlineKeyboardMarkup());
                 return sendMessage;
             }
             default -> {

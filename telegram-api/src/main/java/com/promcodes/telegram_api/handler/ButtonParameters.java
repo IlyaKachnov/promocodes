@@ -21,15 +21,17 @@ public class ButtonParameters {
 
     private final ServiceProperties serviceProperties;
     private InlineKeyboardMarkup inlineKeyboardMarkup;
+    private InlineKeyboardMarkup closeSearchInlineKeyboardMarkup;
 
     @Value("${service.pilot-mode}")
     private boolean mode;
 
     @PostConstruct
     public void init() {
-
         List<InlineKeyboardButton> buttons = new ArrayList<>();
         if (mode) {
+
+            List<InlineKeyboardButton> closeSearchButtons = new ArrayList<>();
             //test mode for check parsing
             log.info("Use test mode, one button");
             var inlineKeyboardButton = new InlineKeyboardButton();
@@ -44,6 +46,14 @@ public class ButtonParameters {
 
             inlineKeyboardMarkup = new InlineKeyboardMarkup();
             inlineKeyboardMarkup.setKeyboard(List.of(buttons));
+
+            var closeSearchInlineKeyboardButton = new InlineKeyboardButton();
+            closeSearchInlineKeyboardButton.setText("Завершить поиск");
+            closeSearchInlineKeyboardButton.setCallbackData("close-search");
+            closeSearchButtons.add(closeSearchInlineKeyboardButton);
+
+            closeSearchInlineKeyboardMarkup = new InlineKeyboardMarkup();
+            closeSearchInlineKeyboardMarkup.setKeyboard(List.of(closeSearchButtons));
             return;
         }
         serviceProperties.getButtons().forEach((k, v) -> {
