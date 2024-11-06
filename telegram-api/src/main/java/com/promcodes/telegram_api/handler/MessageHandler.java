@@ -8,11 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -20,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MessageHandler {
 
-    private final ButtonParameters buttonParameters;
     private final ConcurrentHashMap<String, String> chatMode;
     private final PromocodeService promocodeService;
     private final MessageContentBuilder messageContentBuilder;
@@ -33,35 +28,33 @@ public class MessageHandler {
         if (inputText == null) {
             throw new IllegalArgumentException();
         }
-        if (inputText.equals("/start")) {
-            log.info("Call start message, chatId = {}", chatId);
-            SendMessage sendMessage = new SendMessage(chatId, "Выбери одну из опций:");
-            sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
-
-            chatMode.put(chatId, ChatMode.INPUT.toString());
-            return sendMessage;
-        }
-
-        switch (chatModeValue) {
-            case ("INPUT") -> {
-                log.info("Use INPUT mode for chatID = {}", chatId);
-                return new SendMessage(chatId, "Команда не найдена");
+        switch (inputText) {
+            case ("/start") -> {
+                chatMode.put(chatId, ChatMode.INPUT.toString());
+                log.info("Call start message, chatId = {}", chatId);
+                return new SendMessage(chatId, MessageConstants.startMessageText);
             }
-            case ("SEARCH") -> {
-                var promoCodeEntities = promocodeService.searchByCompany(inputText);
-                if (CollectionUtils.isEmpty(promoCodeEntities)) {
-                    var sendMessage = new SendMessage(chatId, "По вашему запросу ничего не найдено");
-                    sendMessage.setReplyMarkup(buttonParameters.getCloseSearchInlineKeyboardMarkup());
-                    return sendMessage;
-                }
-                var sendMessage = generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
-                sendMessage.setReplyMarkup(buttonParameters.getCloseSearchInlineKeyboardMarkup());
-                return sendMessage;
+            case ("/new") -> {
+                chatMode.put(chatId, ChatMode.INPUT.toString());
+                return generateMessage(messageContentBuilder.build(promocodeService.getLast()), chatId);
+            }
+            case ("/search") -> {
+                chatMode.put(chatId, ChatMode.SEARCH.toString());
+                return generateMessage("Введите имя компании", chatId);
+            }
+            case ("/closesearch") -> {
+                chatMode.put(chatId, ChatMode.INPUT.toString());
+                return generateMessage("Поиск завершен", chatId);
             }
             default -> {
-                log.error("No mode found for chatID = {}", chatId);
-                chatMode.put(chatId, ChatMode.INPUT.toString());
-                throw new IllegalArgumentException();
+                if (ChatMode.valueOf(chatModeValue) == ChatMode.SEARCH) {
+                    var promoCodeEntities = promocodeService.searchByCompany(inputText);
+                    if (CollectionUtils.isEmpty(promoCodeEntities)) {
+                        return new SendMessage(chatId, "По вашему запросу ничего не найдено - остановить поиск: /closesearch");
+                    }
+                    return generateMessage(messageContentBuilder.build(promoCodeEntities), chatId);
+                }
+                return new SendMessage(chatId, "Команда не найдена");
             }
         }
     }

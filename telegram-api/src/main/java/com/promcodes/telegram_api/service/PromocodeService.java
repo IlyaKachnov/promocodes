@@ -32,6 +32,10 @@ public class PromocodeService {
         return promoCodeRepository.getNPromosByExecutionId(executionEntity.get().getId(), limit);
     }
 
+    public List<PromoCodeEntity> getLast() {
+        return promoCodeRepository.findTop15ByOrderByExecutionIdDesc();
+    }
+
     public List<PromoCodeEntity> searchByCompany(String company) {
         var searchString = company.trim().toLowerCase(Locale.ROOT);
         return promoCodeRepository.getPromosByCompanyNameV2(searchString);

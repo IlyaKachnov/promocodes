@@ -20,4 +20,6 @@ public interface PromoCodeRepository extends CrudRepository<PromoCodeEntity, Lon
             "WHERE to_tsvector(company_name) @@ plainto_tsquery(:companyName) " +
             "ORDER BY ts_rank(to_tsvector(company_name), plainto_tsquery(:companyName)) DESC")
     List<PromoCodeEntity> getPromosByCompanyNameV2(String companyName);
+
+    List<PromoCodeEntity> findTop15ByOrderByExecutionIdDesc();
 }

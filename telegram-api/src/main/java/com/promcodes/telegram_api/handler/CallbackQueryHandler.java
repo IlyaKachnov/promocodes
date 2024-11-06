@@ -29,7 +29,7 @@ public class CallbackQueryHandler {
         switch (data) {
             case ("Последние") -> {
                 chatMode.put(chatId, ChatMode.INPUT.toString());
-                var sendMessage = generateMessage(messageContentBuilder.build(promocodeService.getLastNPromos(10)), chatId);
+                var sendMessage = generateMessage(messageContentBuilder.build(promocodeService.getLast()), chatId);
                 sendMessage.setReplyMarkup(buttonParameters.getInlineKeyboardMarkup());
                 return sendMessage;
             }
